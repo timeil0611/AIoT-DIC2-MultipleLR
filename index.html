@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRISP-DM Regression Explorer：50 Startups MLR &amp; 2330.TW Auto Regression</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{color-scheme:light;--primary-dark:#343090;--primary:#4f46e5;--primary-light:#6366f1;--primary-subtle:#eef2ff;--emerald:#10b981;--emerald-subtle:#ecfdf5;--amber:#f59e0b;--amber-subtle:#fffbeb;--rose:#f43f5e;
+--s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;--s400:#94a3b8;--s500:#64748b;--s600:#475569;--s700:#334155;--s800:#1e293b;--s900:#0f172a;
+--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--sh-sm:0 1px 3px 0 rgba(0,0,0,.05);--sh-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);--sh-lg:0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -4px rgba(0,0,0,.04)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Noto Sans TC',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--s50);color:var(--s800);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Outfit','Noto Sans TC',sans-serif;font-weight:700;color:var(--s900)}
+.container{max-width:1380px;margin:0 auto;padding:24px 20px 60px}
+.top-header{background:#fff;border-bottom:1px solid var(--s200);padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.header-inner{max-width:1380px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.breadcrumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--s500);margin-bottom:4px}
+.header-title-group h1{font-size:24px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand-badge{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:9999px;letter-spacing:.04em}
+.header-actions{display:flex;align-items:center;gap:12px}
+.ref-btn{display:inline-flex;align-items:center;gap:8px;background:var(--s100);color:var(--s700);border:1px solid var(--s200);padding:8px 14px;border-radius:var(--r-md);font-size:13px;font-weight:600;text-decoration:none}
+.ref-btn:hover{background:#fff;border-color:var(--primary-light);color:var(--primary)}
+.hero-card{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#3730a3 100%);color:#fff;border-radius:var(--r-xl);padding:36px 40px;margin-bottom:28px;box-shadow:var(--sh-lg);position:relative;overflow:hidden}
+.hero-card::after{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(99,102,241,.25) 0%,transparent 70%);pointer-events:none}
+.hero-card h2{font-size:32px;color:#fff;margin-bottom:12px;line-height:1.25}
+.hero-card p{font-size:15px;color:#c7d2fe;max-width:820px;line-height:1.6}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.hero-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#e0e7ff;font-size:12px;font-weight:500;padding:5px 12px;border-radius:9999px;display:flex;align-items:center;gap:6px}
+.card,.controls-wrapper{background:#fff;border-radius:var(--r-lg);border:1px solid var(--s200);box-shadow:var(--sh-sm);padding:24px}
+.controls-wrapper{padding:20px 24px;margin-bottom:24px}
+.card:hover{box-shadow:var(--sh-md);border-color:var(--s300)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.card-title-group h3{font-size:18px;display:flex;align-items:center;gap:8px}
+.card-subtitle{font-size:13px;color:var(--s500);margin-top:2px}
+.control-label{font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--s500);margin-bottom:10px;display:block}
+.tabs-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.tab-btn,.k-btn{font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border-radius:var(--r-md);font-weight:600;color:var(--s700);transition:background .2s,border-color .2s,color .2s}
+.tab-btn{padding:10px 18px;background:var(--s50);border:1px solid var(--s200);font-size:13.5px}
+.tab-btn:hover:not(:disabled){background:var(--primary-subtle);border-color:var(--primary-light);color:var(--primary)}
+.tab-btn.active{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff;box-shadow:0 4px 10px rgba(52,48,144,.25)}
+.tab-btn:disabled{opacity:.45;cursor:not-allowed}
+.tab-btn .badge-pill{font-size:10px;padding:2px 7px;border-radius:9999px;background:rgba(0,0,0,.06)}
+.tab-btn.active .badge-pill{background:rgba(255,255,255,.25);color:#fff}
+.k-selector-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.k-btn{padding:9px 16px;border:1px solid var(--s200);background:#fff;font-size:13px}
+.k-btn:hover{border-color:var(--primary);color:var(--primary)}
+.k-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 10px rgba(79,70,229,.25)}
+.k-btn.sweet-spot{border-color:var(--emerald);background:var(--emerald-subtle);color:#065f46}
+.k-btn.sweet-spot.active{background:#059669;border-color:#059669;color:#fff}
+.k-btn.overfitting{border-color:var(--amber)}
+.k-btn.overfitting.active{background:#d97706;border-color:#d97706;color:#fff}
+.k-btn small{font-weight:400;font-size:11px}
+:focus-visible{outline:3px solid rgba(79,70,229,.45);outline-offset:2px}
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:24px}
+.metric-card{background:#fff;border-radius:var(--r-lg);border:1px solid var(--s200);padding:20px;position:relative;overflow:hidden;box-shadow:var(--sh-sm)}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--primary)}
+.metric-card.sweet::before{background:var(--emerald)}
+.metric-card.alert::before{background:var(--amber)}
+.metric-title{font-size:12px;font-weight:600;color:var(--s500);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.metric-val{font-size:26px;font-family:'Outfit',sans-serif;font-weight:700;color:var(--s900);line-height:1.1;margin-bottom:6px}
+.metric-note{font-size:12px;color:var(--s500)}
+.badge-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;display:inline-flex;align-items:center;gap:4px}
+.badge-green{background:var(--emerald-subtle);color:#065f46;border:1px solid #a7f3d0}
+.badge-blue{background:var(--primary-subtle);color:var(--primary-dark);border:1px solid #c7d2fe}
+.badge-amber{background:var(--amber-subtle);color:#92400e;border:1px solid #fde68a}
+.chips-bar{background:#fff;border:1px solid var(--s200);border-radius:var(--r-md);padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.feature-chip{background:var(--primary-subtle);color:var(--primary-dark);font-weight:600;padding:3px 8px;border-radius:6px;font-size:12px;display:inline-block}
+.dual-charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:24px;margin-bottom:24px}
+.chart-container{position:relative;height:340px;width:100%}
+.equation-card{background:linear-gradient(to right,#fcfdff,#f8faff);border:1px solid #cfcfea;border-left:5px solid var(--primary);border-radius:var(--r-md);padding:20px 24px;margin-bottom:24px}
+.equation-title{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px}
+.equation-formula{font-family:'Fira Code',ui-monospace,monospace;font-size:15px;line-height:1.8;word-break:break-word;background:#fff;padding:14px 18px;border-radius:var(--r-sm);border:1px solid var(--s200)}
+.eq-intercept{color:#4338ca;font-weight:600}.eq-var{color:#0284c7;font-weight:600}.eq-pos{color:#059669;font-weight:600}.eq-neg{color:#dc2626;font-weight:600}
+.table-responsive{overflow-x:auto;border-radius:var(--r-md);border:1px solid var(--s200)}
+table.data-table{width:100%;border-collapse:collapse;font-size:13.5px;text-align:left}
+table.data-table thead{background:var(--s100)}
+table.data-table th{padding:12px 16px;font-weight:600;color:var(--s700);font-size:12px;white-space:nowrap}
+table.data-table td{padding:12px 16px;border-bottom:1px solid var(--s100);color:var(--s700)}
+table.data-table tbody tr:hover{background:#f8faff}
+.mono{font-family:'Fira Code',ui-monospace,monospace}
+.calc-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:24px}
+.input-group{margin-bottom:16px}
+.input-group.unused{opacity:.45}
+.input-label-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--s700);gap:8px}
+.input-field{width:100%;padding:10px 14px;border:1px solid var(--s300);border-radius:var(--r-md);font-size:14px;font-family:inherit;color:var(--s900);background:#fff}
+.input-field:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+.range-slider{width:100%;margin-top:6px;accent-color:var(--primary)}
+.prediction-output-box{background:linear-gradient(135deg,#312e81 0%,#1e1b4b 100%);color:#fff;border-radius:var(--r-lg);padding:30px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;overflow:hidden}
+.pred-label{font-size:13px;letter-spacing:.04em;color:#c7d2fe;margin-bottom:10px}
+.pred-value{font-size:38px;font-family:'Outfit',sans-serif;font-weight:800;color:#34d399;margin-bottom:12px}
+.pred-formula-note{font-size:12px;color:#a5b4fc;line-height:1.5}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.dot-green{background:var(--emerald)}.dot-amber{background:var(--amber)}
+.data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end}
+.data-grid .wide{grid-column:span 2}
+.btn{font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:var(--r-md);border:1px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn.ghost{background:#fff;color:var(--primary)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+#status{font-size:13px;color:var(--s600);margin-top:14px}
+#status.err{color:#b91c1c}
+.hidden{display:none!important}
+footer{margin-top:50px;background:#fff;border-top:1px solid var(--s200);padding:36px 0;color:var(--s600);font-size:13.5px}
+.footer-inner{max-width:1380px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px}
+.ack-card{background:var(--s50);border:1px solid var(--s200);border-radius:var(--r-md);padding:16px 20px;margin-top:16px;line-height:1.6}
+.ack-card a{color:var(--primary);font-weight:500}
+@media (max-width:900px){.calc-grid{grid-template-columns:1fr}.data-grid .wide{grid-column:auto}}
+@media (max-width:768px){.dual-charts-grid{grid-template-columns:1fr}.hero-card{padding:24px}.hero-card h2{font-size:24px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top-header">
+  <div class="header-inner">
+    <div>
+      <div class="breadcrumbs">
+        <span><i class="fa-solid fa-house"></i> Home</span>
+        <i class="fa-solid fa-chevron-right" style="font-size:10px"></i>
+        <span>Regression Analysis</span>
+        <i class="fa-solid fa-chevron-right" style="font-size:10px"></i>
+        <span style="color:var(--s800);font-weight:600" id="crumb">50 Startups Feature Progression</span>
+      </div>
+      <div class="header-title-group">
+        <h1><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> <span id="titleText">50 Startups Multiple Linear Regression Explorer</span> <span class="brand-badge">CRISP-DM</span></h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <label for="problem" class="control-label" style="margin:0">Problem</label>
+      <select id="problem" class="input-field" style="width:auto">
+        <option value="mlr">Problem 1：50 Startups（Multiple Linear Regression）</option>
+        <option value="ar">Problem 2：2330.TW 股價（Auto Regression）</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="hero-card">
+    <h2 id="heroTitle">Feature Selection &amp; Parsimony Analysis</h2>
+    <p id="heroText"></p>
+    <div class="hero-tags" id="heroTags"></div>
+  </div>
+
+  <section class="controls-wrapper" aria-labelledby="dataLbl">
+    <span class="control-label" id="dataLbl"><i class="fa-solid fa-database"></i> 0. Dataset（可輸入任意 CSV 網址）</span>
+    <div class="data-grid">
+      <label class="wide"><span class="input-label-row">CSV URL（留空＝使用內建資料）</span>
+        <input type="url" id="url" class="input-field" placeholder="https://raw.githubusercontent.com/.../data.csv"></label>
+      <label><span class="input-label-row">或上傳 CSV</span><input type="file" id="file" class="input-field" accept=".csv,text/csv"></label>
+      <div class="btn-row"><button class="btn" id="btnLoad"><i class="fa-solid fa-cloud-arrow-down"></i> 載入網址</button>
+        <button class="btn ghost" id="btnDefault"><i class="fa-solid fa-rotate-left"></i> 內建資料</button></div>
+    </div>
+    <div class="data-grid" style="margin-top:14px">
+      <label class="mlrOnly"><span class="input-label-row">Target (y)</span><select id="target" class="input-field"></select></label>
+      <label class="mlrOnly"><span class="input-label-row">Test size</span><input type="number" id="testSize" class="input-field" value="0.2" min="0.1" max="0.5" step="0.05"></label>
+      <label class="mlrOnly"><span class="input-label-row">Random seed</span><input type="number" id="seed" class="input-field" value="0"></label>
+      <label class="arOnly"><span class="input-label-row">Date column</span><select id="dateCol" class="input-field"></select></label>
+      <label class="arOnly"><span class="input-label-row">Value column</span><select id="valCol" class="input-field"></select></label>
+      <label class="arOnly"><span class="input-label-row">Max lag P（特徵 = lag_1…lag_P）</span><input type="number" id="maxLag" class="input-field" value="10" min="1" max="30"></label>
+      <label class="arOnly"><span class="input-label-row">Test ratio（時間序列後段）</span><input type="number" id="arTest" class="input-field" value="0.2" min="0.1" max="0.5" step="0.05"></label>
+      <div><button class="btn" id="btnRun"><i class="fa-solid fa-play"></i> 重新訓練</button></div>
+    </div>
+    <div id="status" role="status" aria-live="polite"></div>
+    <div id="profile" class="card-subtitle" style="margin-top:6px"></div>
+  </section>
+
+  <section class="controls-wrapper" aria-label="Model controls">
+    <span class="control-label"><i class="fa-solid fa-sliders"></i> 1. Select Feature Selection Algorithm</span>
+    <div class="tabs-pills" id="algoTabs" role="group"></div>
+    <span class="control-label"><i class="fa-solid fa-list-ol"></i> 2. Number of Features (k = 1 to <span id="pMax">5</span>)</span>
+    <div class="k-selector-group" id="kGroup" role="group"></div>
+  </section>
+
+  <div class="metrics-grid" id="metricsGrid"></div>
+
+  <div class="chips-bar">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:13px;font-weight:700;color:var(--s700)"><i class="fa-solid fa-check-double" style="color:var(--primary)"></i> Active Predictors (<span id="featCount">0</span>):</span>
+      <div id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+    <div id="notice" class="badge-tag badge-green" style="font-size:12px;padding:4px 10px"></div>
+  </div>
+  <div class="dual-charts-grid">
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> RMSE by Number of Features</h3>
+        <div class="card-subtitle">Lower is better（test set）。點擊資料點可切換 k。</div></div>
+        <span class="badge-tag badge-blue" id="rmseBadge2"></span></div>
+      <div class="chart-container"><canvas id="rmseChart" aria-label="RMSE by number of features"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-arrow-trend-up" style="color:var(--emerald)"></i> R-squared by Number of Features</h3>
+        <div class="card-subtitle">Higher is better（test set）。</div></div>
+        <span class="badge-tag badge-green" id="r2Badge2"></span></div>
+      <div class="chart-container"><canvas id="r2Chart" aria-label="R-squared by number of features"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-header"><div class="card-title-group"><h3 id="c3Title"><i class="fa-solid fa-bullseye" style="color:var(--primary)"></i> Actual vs Predicted（test set）</h3>
+      <div class="card-subtitle" id="c3Sub">點越靠近紅色虛線 y = x，預測越準。</div></div></div>
+    <div class="chart-container"><canvas id="c3Chart" aria-label="actual versus predicted"></canvas></div>
+  </div>
+
+  <div class="equation-card">
+    <div class="equation-title"><i class="fa-solid fa-square-root-variable"></i> Fitted OLS Regression Equation</div>
+    <div class="equation-formula" id="equationBox"></div>
+  </div>
+
+  <div class="calc-grid">
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-table" style="color:var(--primary)"></i> Model Coefficients &amp; Statistical Tests</h3>
+        <div class="card-subtitle">OLS on training set：estimate, standard error, t-statistic, p-value, 95% CI, VIF.</div></div></div>
+      <div class="table-responsive"><table class="data-table">
+        <thead><tr><th>Predictor</th><th>Estimate (β)</th><th>Std. Error</th><th>t-Stat</th><th>p-Value</th><th>95% Conf. Int</th><th>VIF</th></tr></thead>
+        <tbody id="coefBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-calculator" style="color:var(--emerald)"></i> <span id="predTitle">Live Profit Predictor</span></h3>
+        <div class="card-subtitle" id="predSub">Test predictions in real-time with the active model.</div></div>
+        <span class="badge-tag badge-green"><i class="fa-solid fa-bolt"></i> Real-time</span></div>
+      <div id="predInputs"></div>
+      <div class="prediction-output-box" aria-live="polite">
+        <div class="pred-label" id="predLabel">Predicted Startup Profit</div>
+        <div class="pred-value" id="predOut">-</div>
+        <div class="pred-formula-note" id="predNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-magnifying-glass" style="color:var(--amber)"></i> Test Set Residuals &amp; Outliers Diagnostic</h3>
+      <div class="card-subtitle" id="outSub">Top absolute residuals on the out-of-sample test set.</div></div>
+      <span class="badge-tag badge-blue"><i class="fa-solid fa-filter"></i> Sorted by |Residual|</span></div>
+    <div class="table-responsive"><table class="data-table">
+      <thead><tr><th>Rank</th><th>Sample</th><th>Actual</th><th>Predicted</th><th>Residual</th><th>Abs Error</th><th>% Error</th><th>Diagnostic Status</th></tr></thead>
+      <tbody id="outBody"></tbody></table></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div style="max-width:650px">
+      <h4 style="font-size:16px;margin-bottom:8px"><i class="fa-solid fa-building-columns"></i> CRISP-DM Regression Explorer</h4>
+      <p style="font-size:13px;line-height:1.6">同一套 workflow 套用到兩個問題：50 Startups 多元線性回歸，以及 2330.TW 以 lag_1…lag_P 為特徵的 Auto Regression。所有模型在瀏覽器端以 OLS 計算，使用 Vanilla HTML、CSS、JavaScript 與 Chart.js。</p>
+    </div>
+    <div style="max-width:550px">
+      <h4 style="font-size:14px;color:var(--s500);margin-bottom:8px">References &amp; Acknowledgments</h4>
+      <div class="ack-card">
+        <strong>Layout reference：</strong><a href="https://huanchen1107.github.io/AIoT-DIC2-MultipleLR/" target="_blank" rel="noopener">AIoT-DIC2-MultipleLR</a><br>
+        <strong>Dataset：</strong><a href="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv" target="_blank" rel="noopener">50 Startups (Avik-Jain)</a>；2330.TW 日收盤價（Yahoo Finance）<br>
+        <strong>Methodology：</strong>CRISP-DM
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+// ===== Core numerics (no DOM) =====
+function parseCSV(text) {
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { cur += '"'; i++; }
+      else if (c === '"') q = false;
+      else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cur); cur = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(cur); cur = '';
+      if (row.some(v => v.trim() !== '')) rows.push(row);
+      row = [];
+    } else cur += c;
+  }
+  row.push(cur); if (row.some(v => v.trim() !== '')) rows.push(row);
+  if (rows.length < 2) throw new Error('CSV 至少需要標題列與一筆資料');
+  const header = rows[0].map(h => h.trim());
+  const data = rows.slice(1).map(r => Object.fromEntries(header.map((h, j) => [h, (r[j] ?? '').trim()])));
+  return { header, data };
+}
+
+const isNum = v => v !== '' && v != null && isFinite(Number(v));
+
+function profile(header, data) {
+  return header.map(h => {
+    const vals = data.map(r => r[h]).filter(v => v !== '');
+    const numeric = vals.length > 0 && vals.every(isNum);
+    return { name: h, numeric, missing: data.length - vals.length,
+             levels: numeric ? null : [...new Set(vals)].sort() };
+  });
+}
+
+function median(a) { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+
+// Solve A x = b with Gaussian elimination + partial pivoting
+function solve(A, b) {
+  const n = b.length, M = A.map((r, i) => [...r, b[i]]);
+  for (let c = 0; c < n; c++) {
+    let p = c;
+    for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+    [M[c], M[p]] = [M[p], M[c]];
+    if (Math.abs(M[c][c]) < 1e-12) throw new Error('矩陣奇異（可能有完全共線的特徵）');
+    for (let r = c + 1; r < n; r++) {
+      const f = M[r][c] / M[c][c];
+      for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k];
+    }
+  }
+  const x = new Array(n).fill(0);
+  for (let r = n - 1; r >= 0; r--) {
+    let s = M[r][n];
+    for (let k = r + 1; k < n; k++) s -= M[r][k] * x[k];
+    x[r] = s / M[r][r];
+  }
+  return x;
+}
+
+// OLS with standardization for numerical stability; returns coefs on original scale
+function fitOLS(X, y) {
+  const n = X.length, p = X[0].length;
+  const mu = [], sd = [];
+  for (let j = 0; j < p; j++) {
+    const col = X.map(r => r[j]); mu[j] = mean(col);
+    sd[j] = Math.sqrt(mean(col.map(v => (v - mu[j]) ** 2))) || 1;
+  }
+  const ym = mean(y);
+  const Z = X.map(r => r.map((v, j) => (v - mu[j]) / sd[j]));
+  const A = Array.from({ length: p }, () => new Array(p).fill(0)), b = new Array(p).fill(0);
+  for (let i = 0; i < n; i++) for (let j = 0; j < p; j++) {
+    b[j] += Z[i][j] * (y[i] - ym);
+    for (let k = 0; k < p; k++) A[j][k] += Z[i][j] * Z[i][k];
+  }
+  for (let j = 0; j < p; j++) A[j][j] += 1e-9 * n; // tiny jitter
+  const w = solve(A, b);
+  const coef = w.map((v, j) => v / sd[j]);
+  const intercept = ym - coef.reduce((s, c, j) => s + c * mu[j], 0);
+  return { coef, intercept, predict: R => R.map(r => intercept + r.reduce((s, v, j) => s + v * coef[j], 0)) };
+}
+
+function metrics(y, yp) {
+  const n = y.length, ym = mean(y);
+  let sse = 0, sae = 0, sst = 0;
+  for (let i = 0; i < n; i++) { const e = y[i] - yp[i]; sse += e * e; sae += Math.abs(e); sst += (y[i] - ym) ** 2; }
+  return { R2: 1 - sse / sst, MAE: sae / n, MSE: sse / n, RMSE: Math.sqrt(sse / n) };
+}
+
+function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function splitIdx(n, testRatio, seed) {
+  const idx = [...Array(n).keys()], r = rng(seed);
+  for (let i = n - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  const nt = Math.ceil(n * testRatio);
+  return { test: idx.slice(0, nt), train: idx.slice(nt) };
+}
+
+// One-hot (drop first) + median fill. Returns spec usable for new rows.
+function buildDesign(prof, data, target) {
+  const spec = [];
+  prof.filter(c => c.name !== target).forEach(c => {
+    if (c.numeric) {
+      const vals = data.map(r => r[c.name]).filter(isNum).map(Number);
+      spec.push({ col: c.name, numeric: true, fill: median(vals), mean: mean(vals), names: [c.name] });
+    } else if (c.levels.length >= 2 && c.levels.length <= 30) {
+      spec.push({ col: c.name, numeric: false, levels: c.levels, names: c.levels.slice(1).map(l => `${c.name}_${l}`) });
+    }
+  });
+  const encode = row => spec.flatMap(s => s.numeric
+    ? [isNum(row[s.col]) ? Number(row[s.col]) : s.fill]
+    : s.levels.slice(1).map(l => (row[s.col] === l ? 1 : 0)));
+  const names = spec.flatMap(s => s.names);
+  return { spec, names, encode, X: data.map(encode) };
+}
+
+const pick = (X, cols) => X.map(r => cols.map(j => r[j]));
+
+function forwardSelection(Xtr, ytr, Xte, yte, names) {
+  const sel = [], out = [];
+  while (sel.length < names.length) {
+    let best = null;
+    names.forEach((_, j) => {
+      if (sel.includes(j)) return;
+      const cols = [...sel, j];
+      try {
+        const m = fitOLS(pick(Xtr, cols), ytr), e = metrics(yte, m.predict(pick(Xte, cols)));
+        if (!best || e.RMSE < best.e.RMSE) best = { j, e, m, cols };
+      } catch (_) { /* singular, skip */ }
+    });
+    if (!best) break;
+    sel.push(best.j);
+    out.push({ k: sel.length, cols: [...sel], features: sel.map(j => names[j]), model: best.m,
+               test: best.e, train: metrics(ytr, best.m.predict(pick(Xtr, sel))) });
+  }
+  return out;
+}
+
+// AR helpers
+function makeLags(series, p) {
+  const X = [], y = [], idx = [];
+  for (let t = p; t < series.length; t++) {
+    const r = []; for (let i = 1; i <= p; i++) r.push(series[t - i]);
+    X.push(r); y.push(series[t]); idx.push(t);
+  }
+  return { X, y, idx };
+}
+function fitAR(series, p, testRatio) {
+  const { X, y, idx } = makeLags(series, p), n = Math.floor(X.length * (1 - testRatio));
+  const m = fitOLS(X.slice(0, n), y.slice(0, n));
+  return { m, n, X, y, idx,
+    train: metrics(y.slice(0, n), m.predict(X.slice(0, n))),
+    test: metrics(y.slice(n), m.predict(X.slice(n))),
+    naive: metrics(y.slice(n), X.slice(n).map(r => r[0])) };
+}
+function forecast(m, series, p, steps) {
+  const h = series.slice(), out = [];
+  for (let s = 0; s < steps; s++) {
+    const r = []; for (let i = 1; i <= p; i++) r.push(h[h.length - i]);
+    const v = m.predict([r])[0]; out.push(v); h.push(v);
+  }
+  return out;
+}
+
+
+// ===== Feature selection + OLS inference (no DOM) =====
+// --- distributions ---
+function lgamma(x) {
+  const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+  let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+  let s = 1.000000000190015; for (const v of c) s += v / ++y;
+  return -t + Math.log(2.5066282746310005 * s / x);
+}
+function betacf(a, b, x) {
+  const EPS = 3e-14, FP = 1e-300; let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+  if (Math.abs(d) < FP) d = FP; d = 1 / d; let h = d;
+  for (let m = 1; m <= 300; m++) {
+    const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FP) d = FP; c = 1 + aa / c; if (Math.abs(c) < FP) c = FP; d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FP) d = FP; c = 1 + aa / c; if (Math.abs(c) < FP) c = FP; d = 1 / d;
+    const del = d * c; h *= del; if (Math.abs(del - 1) < EPS) break;
+  }
+  return h;
+}
+function ibeta(x, a, b) {
+  if (x <= 0) return 0; if (x >= 1) return 1;
+  const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+}
+const tPval = (t, df) => ibeta(df / (df + t * t), df / 2, 0.5);           // two-sided
+const fPval = (F, d1, d2) => ibeta(d2 / (d2 + d1 * F), d2 / 2, d1 / 2);
+function tCrit(df) { let lo = 0, hi = 1000; for (let i = 0; i < 100; i++) { const m = (lo + hi) / 2; tPval(m, df) > 0.05 ? lo = m : hi = m; } return (lo + hi) / 2; }
+
+function invert(A) {
+  const n = A.length, M = A.map((r, i) => [...r, ...A.map((_, j) => (i === j ? 1 : 0))]);
+  for (let c = 0; c < n; c++) {
+    let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+    [M[c], M[p]] = [M[p], M[c]];
+    if (Math.abs(M[c][c]) < 1e-14) throw new Error('singular');
+    const d = M[c][c]; for (let k = 0; k < 2 * n; k++) M[c][k] /= d;
+    for (let r = 0; r < n; r++) if (r !== c) { const f = M[r][c]; if (f) for (let k = 0; k < 2 * n; k++) M[r][k] -= f * M[c][k]; }
+  }
+  return M.map(r => r.slice(n));
+}
+
+function standardize(X) {
+  const p = X[0].length, mu = [], sd = [];
+  for (let j = 0; j < p; j++) { const c = X.map(r => r[j]); mu[j] = mean(c); sd[j] = Math.sqrt(mean(c.map(v => (v - mu[j]) ** 2))) || 1; }
+  return X.map(r => r.map((v, j) => (v - mu[j]) / sd[j]));
+}
+
+// --- OLS with inference (fit on training data) ---
+function olsStats(X, y, names) {
+  const m = fitOLS(X, y), n = X.length, k = names.length, df = n - k - 1;
+  const yp = m.predict(X), ym = mean(y);
+  let sse = 0, sst = 0; for (let i = 0; i < n; i++) { sse += (y[i] - yp[i]) ** 2; sst += (y[i] - ym) ** 2; }
+  const s2 = sse / df;
+  const A = X.map(r => [1, ...r]), q = k + 1, sc = [];
+  for (let j = 0; j < q; j++) sc[j] = Math.max(...A.map(r => Math.abs(r[j]))) || 1;
+  const G = Array.from({ length: q }, (_, a) => Array.from({ length: q }, (_, b) => A.reduce((s, r) => s + r[a] * r[b], 0) / (sc[a] * sc[b])));
+  const Gi = invert(G), tc = tCrit(df), beta = [m.intercept, ...m.coef];
+  const vif = names.map((_, j) => {
+    if (k === 1) return 1;
+    const others = names.map((_, i) => i).filter(i => i !== j), xj = X.map(r => r[j]);
+    const r2 = metrics(xj, fitOLS(X.map(r => others.map(i => r[i])), xj).predict(X.map(r => others.map(i => r[i])))).R2;
+    return 1 / Math.max(1e-12, 1 - r2);
+  });
+  const coefficients = beta.map((b, a) => {
+    const se = Math.sqrt(s2 * Gi[a][a]) / sc[a], t = b / se;
+    return { feature: a === 0 ? 'Intercept (β₀)' : names[a - 1], coef: b, stderr: se, tstat: t, pvalue: tPval(Math.abs(t), df),
+             ci_lower: b - tc * se, ci_upper: b + tc * se, vif: a === 0 ? null : vif[a - 1] };
+  });
+  const F = ((sst - sse) / k) / s2;
+  return { model: m, coefficients, f_stat: F, f_pvalue: fPval(F, k, df) };
+}
+
+// --- selection algorithms: each returns subsets[k] (array of column indices), k = 1..p ---
+function regPathOrder(X, y, l1) {          // Lasso (l1=1) / ElasticNet (l1=.5) coordinate-descent path, sklearn objective
+  const Z = standardize(X), n = Z.length, p = Z[0].length, ym = mean(y), r = y.map(v => v - ym);
+  const amax = Math.max(...Z[0].map((_, j) => Math.abs(Z.reduce((s, row, i) => s + row[j] * r[i], 0)))) / (n * l1);
+  const w = new Array(p).fill(0), order = [];
+  for (let s = 0; s < 200 && order.length < p; s++) {
+    const alpha = amax * Math.pow(1e-3, s / 199);
+    for (let it = 0; it < 2000; it++) {
+      let dmax = 0;
+      for (let j = 0; j < p; j++) {
+        let rho = 0; for (let i = 0; i < n; i++) rho += Z[i][j] * r[i]; rho = rho / n + w[j];
+        const nw = Math.sign(rho) * Math.max(0, Math.abs(rho) - alpha * l1) / (1 + alpha * (1 - l1));
+        const d = nw - w[j]; if (d) { for (let i = 0; i < n; i++) r[i] -= Z[i][j] * d; w[j] = nw; dmax = Math.max(dmax, Math.abs(d)); }
+      }
+      if (dmax < 1e-10) break;
+    }
+    w.map((v, j) => [j, Math.abs(v)]).filter(([j, a]) => a > 0 && !order.includes(j)).sort((a, b) => b[1] - a[1]).forEach(([j]) => order.push(j));
+  }
+  w.map((v, j) => [j, Math.abs(v)]).filter(([j]) => !order.includes(j)).sort((a, b) => b[1] - a[1]).forEach(([j]) => order.push(j));
+  return order.map((_, i) => order.slice(0, i + 1));
+}
+function kfold(n, K = 5) {
+  const out = []; let st = 0;
+  for (let f = 0; f < K; f++) { const sz = Math.floor(n / K) + (f < n % K ? 1 : 0); out.push([st, st + sz]); st += sz; }
+  return out;
+}
+function cvR2(X, y, cols) {
+  const sc = kfold(X.length).map(([a, b]) => {
+    const tr = [...X.keys()].filter(i => i < a || i >= b), te = [...X.keys()].filter(i => i >= a && i < b);
+    const m = fitOLS(tr.map(i => cols.map(j => X[i][j])), tr.map(i => y[i]));
+    return metrics(te.map(i => y[i]), m.predict(te.map(i => cols.map(j => X[i][j])))).R2;
+  });
+  return mean(sc);
+}
+function sfsSubsets(X, y, p) {             // sklearn SequentialFeatureSelector(LinearRegression, cv=5, scoring=R²)
+  const sel = [], out = [];
+  while (sel.length < p) {
+    let best = -1, bs = -Infinity;
+    for (let j = 0; j < p; j++) if (!sel.includes(j)) { let s; try { s = cvR2(X, y, [...sel, j].sort((a, b) => a - b)); } catch (_) { s = -Infinity; } if (s > bs) { bs = s; best = j; } }
+    if (best < 0) break; sel.push(best); out.push([...sel].sort((a, b) => a - b));
+  }
+  return out;
+}
+function rfeSubsets(X, y, p) {             // RFE on standardized features, drop smallest |coef|
+  const Z = standardize(X); let cur = [...Array(p).keys()]; const out = []; out[p - 1] = [...cur];
+  while (cur.length > 1) {
+    const m = fitOLS(Z.map(r => cur.map(j => r[j])), y);
+    let mi = 0; m.coef.forEach((c, i) => { if (Math.abs(c) < Math.abs(m.coef[mi])) mi = i; });
+    cur = cur.filter((_, i) => i !== mi); out[cur.length - 1] = [...cur];
+  }
+  return out;
+}
+function exhaustiveSubsets(Xtr, ytr, Xte, yte, p) {   // best subset per k by test RMSE
+  const best = [];
+  for (let mask = 1; mask < (1 << p); mask++) {
+    const cols = []; for (let j = 0; j < p; j++) if (mask & (1 << j)) cols.push(j);
+    let e; try { e = metrics(yte, fitOLS(pick(Xtr, cols), ytr).predict(pick(Xte, cols))).RMSE; } catch (_) { continue; }
+    const k = cols.length - 1; if (!best[k] || e < best[k].e) best[k] = { e, cols };
+  }
+  return best.map(b => b.cols);
+}
+
+const ALGOS = ['Lasso', 'Forward SFS', 'RFE', 'ElasticNet', 'Exhaustive'];
+const EXHAUSTIVE_MAX = 12;
+
+// ctx: {Xtr, ytr, Xte, yte, names, labels(test sample labels)}
+function evaluateSubset(ctx, cols, cache) {
+  const key = [...cols].sort((a, b) => a - b).join(',');
+  if (cache[key] !== undefined) return cache[key] && { ...cache[key], features: cols.map(j => ctx.names[j]) };
+  let out = null;
+  try {
+    const st = olsStats(pick(ctx.Xtr, cols), ctx.ytr, cols.map(j => ctx.names[j]));
+    const yp = st.model.predict(pick(ctx.Xte, cols)), e = metrics(ctx.yte, yp), n = ctx.yte.length, k = cols.length;
+    const outliers = ctx.yte.map((a, i) => ({ index: ctx.labels[i], actual: a, predicted: yp[i], residual: a - yp[i], abs_error: Math.abs(a - yp[i]), pct_error: Math.abs((a - yp[i]) / a) * 100 }))
+      .sort((a, b) => b.abs_error - a.abs_error).slice(0, 10).map((o, i) => ({ rank: i + 1, ...o }));
+    out = { ...st, cols, rmse: e.RMSE, mae: e.MAE, mse: e.MSE, r2: e.R2, adj_r2: n - k - 1 > 0 ? 1 - (1 - e.R2) * (n - 1) / (n - k - 1) : null,
+            train_rmse: metrics(ctx.ytr, st.model.predict(pick(ctx.Xtr, cols))).RMSE, ytest: ctx.yte, ypred: yp, outliers };
+  } catch (_) { out = null; }
+  cache[key] = out;
+  return out && { ...out, features: cols.map(j => ctx.names[j]) };
+}
+function runAll(ctx) {
+  const p = ctx.names.length, cache = {}, subsets = {
+    'Lasso': regPathOrder(ctx.Xtr, ctx.ytr, 1),
+    'Forward SFS': sfsSubsets(ctx.Xtr, ctx.ytr, p),
+    'RFE': rfeSubsets(ctx.Xtr, ctx.ytr, p),
+    'ElasticNet': regPathOrder(ctx.Xtr, ctx.ytr, 0.5),
+    'Exhaustive': p <= EXHAUSTIVE_MAX ? exhaustiveSubsets(ctx.Xtr, ctx.ytr, ctx.Xte, ctx.yte, p) : null
+  };
+  const res = {};
+  for (const a of ALGOS) res[a] = subsets[a] ? subsets[a].map((c, i) => c ? { k: i + 1, ...evaluateSubset(ctx, c, cache) } : null).map(e => (e && e.model ? e : null)) : null;
+  return res;
+}
+
+
+// ===== App (DOM) =====
+const DEFAULTS = {
+  mlr: { csv: `R&D Spend,Administration,Marketing Spend,State,Profit
+165349.2,136897.8,471784.1,New York,192261.83
+162597.7,151377.59,443898.53,California,191792.06
+153441.51,101145.55,407934.54,Florida,191050.39
+144372.41,118671.85,383199.62,New York,182901.99
+142107.34,91391.77,366168.42,Florida,166187.94
+131876.9,99814.71,362861.36,New York,156991.12
+134615.46,147198.87,127716.82,California,156122.51
+130298.13,145530.06,323876.68,Florida,155752.6
+120542.52,148718.95,311613.29,New York,152211.77
+123334.88,108679.17,304981.62,California,149759.96
+101913.08,110594.11,229160.95,Florida,146121.95
+100671.96,91790.61,249744.55,California,144259.4
+93863.75,127320.38,249839.44,Florida,141585.52
+91992.39,135495.07,252664.93,California,134307.35
+119943.24,156547.42,256512.92,Florida,132602.65
+114523.61,122616.84,261776.23,New York,129917.04
+78013.11,121597.55,264346.06,California,126992.93
+94657.16,145077.58,282574.31,New York,125370.37
+91749.16,114175.79,294919.57,Florida,124266.9
+86419.7,153514.11,0,New York,122776.86
+76253.86,113867.3,298664.47,California,118474.03
+78389.47,153773.43,299737.29,New York,111313.02
+73994.56,122782.75,303319.26,Florida,110352.25
+67532.53,105751.03,304768.73,Florida,108733.99
+77044.01,99281.34,140574.81,New York,108552.04
+64664.71,139553.16,137962.62,California,107404.34
+75328.87,144135.98,134050.07,Florida,105733.54
+72107.6,127864.55,353183.81,New York,105008.31
+66051.52,182645.56,118148.2,Florida,103282.38
+65605.48,153032.06,107138.38,New York,101004.64
+61994.48,115641.28,91131.24,Florida,99937.59
+61136.38,152701.92,88218.23,New York,97483.56
+63408.86,129219.61,46085.25,California,97427.84
+55493.95,103057.49,214634.81,Florida,96778.92
+46426.07,157693.92,210797.67,California,96712.8
+46014.02,85047.44,205517.64,New York,96479.51
+28663.76,127056.21,201126.82,Florida,90708.19
+44069.95,51283.14,197029.42,California,89949.14
+20229.59,65947.93,185265.1,New York,81229.06
+38558.51,82982.09,174999.3,California,81005.76
+28754.33,118546.05,172795.67,California,78239.91
+27892.92,84710.77,164470.71,Florida,77798.83
+23640.93,96189.63,148001.11,California,71498.49
+15505.73,127382.3,35534.17,New York,69758.98
+22177.74,154806.14,28334.72,California,65200.33
+1000.23,124153.04,1903.93,New York,64926.08
+1315.46,115816.21,297114.46,Florida,49490.75
+0,135426.92,0,California,42559.73
+542.05,51743.15,0,New York,35673.41
+0,116983.8,45173.06,California,14681.4`, name: '50_Startups.csv', unit: '$' },
+  ar: { csv: `Date,Close
+2024-10-14,1045.0
+2024-10-15,1070.0
+2024-10-16,1045.0
+2024-10-17,1035.0
+2024-10-18,1085.0
+2024-10-21,1085.0
+2024-10-22,1075.0
+2024-10-23,1060.0
+2024-10-24,1060.0
+2024-10-25,1065.0
+2024-10-28,1050.0
+2024-10-29,1040.0
+2024-10-30,1030.0
+2024-11-01,1025.0
+2024-11-04,1040.0
+2024-11-05,1050.0
+2024-11-06,1060.0
+2024-11-07,1065.0
+2024-11-08,1090.0
+2024-11-11,1085.0
+2024-11-12,1050.0
+2024-11-13,1035.0
+2024-11-14,1035.0
+2024-11-15,1035.0
+2024-11-18,1025.0
+2024-11-19,1040.0
+2024-11-20,1025.0
+2024-11-21,1010.0
+2024-11-22,1040.0
+2024-11-25,1030.0
+2024-11-26,1010.0
+2024-11-27,1000.0
+2024-11-28,1005.0
+2024-11-29,996.0
+2024-12-02,1035.0
+2024-12-03,1055.0
+2024-12-04,1070.0
+2024-12-05,1075.0
+2024-12-06,1065.0
+2024-12-09,1075.0
+2024-12-10,1065.0
+2024-12-11,1045.0
+2024-12-12,1060.0
+2024-12-13,1065.0
+2024-12-16,1085.0
+2024-12-17,1075.0
+2024-12-18,1085.0
+2024-12-19,1070.0
+2024-12-20,1035.0
+2024-12-23,1080.0
+2024-12-24,1080.0
+2024-12-25,1085.0
+2024-12-26,1085.0
+2024-12-27,1090.0
+2024-12-30,1090.0
+2024-12-31,1075.0
+2025-01-02,1065.0
+2025-01-03,1075.0
+2025-01-06,1125.0
+2025-01-07,1130.0
+2025-01-08,1105.0
+2025-01-09,1100.0
+2025-01-10,1100.0
+2025-01-13,1075.0
+2025-01-14,1090.0
+2025-01-15,1065.0
+2025-01-16,1105.0
+2025-01-17,1120.0
+2025-01-20,1120.0
+2025-01-21,1120.0
+2025-01-22,1135.0
+2025-02-03,1070.0
+2025-02-04,1095.0
+2025-02-05,1110.0
+2025-02-06,1115.0
+2025-02-07,1125.0
+2025-02-10,1105.0
+2025-02-11,1110.0
+2025-02-12,1100.0
+2025-02-13,1090.0
+2025-02-14,1060.0
+2025-02-17,1085.0
+2025-02-18,1100.0
+2025-02-19,1090.0
+2025-02-20,1080.0
+2025-02-21,1095.0
+2025-02-24,1075.0
+2025-02-25,1055.0
+2025-02-26,1060.0
+2025-02-27,1040.0
+2025-03-03,1020.0
+2025-03-04,1000.0
+2025-03-05,1020.0
+2025-03-06,1005.0
+2025-03-07,1005.0
+2025-03-10,998.0
+2025-03-11,971.0
+2025-03-12,988.0
+2025-03-13,965.0
+2025-03-14,959.0
+2025-03-17,970.0
+2025-03-18,971.0
+2025-03-19,952.0
+2025-03-20,985.0
+2025-03-21,972.0
+2025-03-24,972.0
+2025-03-25,990.0
+2025-03-26,980.0
+2025-03-27,958.0
+2025-03-28,952.0
+2025-03-31,910.0
+2025-04-01,944.0
+2025-04-02,942.0
+2025-04-07,848.0
+2025-04-08,816.0
+2025-04-09,785.0
+2025-04-10,863.0
+2025-04-11,889.0
+2025-04-14,865.0
+2025-04-15,877.0
+2025-04-16,855.0
+2025-04-17,847.0
+2025-04-18,850.0
+2025-04-21,835.0
+2025-04-22,816.0
+2025-04-23,873.0
+2025-04-24,864.0
+2025-04-25,888.0
+2025-04-28,897.0
+2025-04-29,902.0
+2025-04-30,908.0
+2025-05-02,950.0
+2025-05-05,938.0
+2025-05-06,920.0
+2025-05-07,928.0
+2025-05-08,918.0
+2025-05-09,949.0
+2025-05-12,957.0
+2025-05-13,969.0
+2025-05-14,999.0
+2025-05-15,993.0
+2025-05-16,998.0
+2025-05-19,984.0
+2025-05-20,978.0
+2025-05-21,990.0
+2025-05-22,982.0
+2025-05-23,984.0
+2025-05-26,976.0
+2025-05-27,965.0
+2025-05-28,967.0
+2025-05-29,967.0
+2025-06-02,946.0
+2025-06-03,950.0
+2025-06-04,990.0
+2025-06-05,998.0
+2025-06-06,995.0
+2025-06-09,1005.0
+2025-06-10,1045.0
+2025-06-11,1065.0
+2025-06-12,1045.0
+2025-06-13,1030.0
+2025-06-16,1025.0
+2025-06-17,1045.0
+2025-06-18,1055.0
+2025-06-19,1035.0
+2025-06-20,1055.0
+2025-06-23,1020.0
+2025-06-24,1050.0
+2025-06-25,1070.0
+2025-06-26,1075.0
+2025-06-27,1080.0
+2025-06-30,1060.0
+2025-07-01,1085.0
+2025-07-02,1085.0
+2025-07-03,1090.0
+2025-07-04,1085.0
+2025-07-07,1080.0
+2025-07-08,1080.0
+2025-07-09,1090.0
+2025-07-10,1100.0
+2025-07-11,1100.0
+2025-07-14,1095.0
+2025-07-15,1110.0
+2025-07-16,1130.0
+2025-07-17,1130.0
+2025-07-18,1155.0
+2025-07-21,1150.0
+2025-07-22,1130.0
+2025-07-23,1145.0
+2025-07-24,1145.0
+2025-07-25,1145.0
+2025-07-28,1145.0
+2025-07-29,1135.0
+2025-07-30,1155.0
+2025-07-31,1160.0
+2025-08-04,1135.0
+2025-08-05,1150.0
+2025-08-06,1125.0
+2025-08-07,1180.0
+2025-08-08,1175.0
+2025-08-11,1180.0
+2025-08-12,1180.0
+2025-08-13,1200.0
+2025-08-14,1175.0
+2025-08-15,1180.0
+2025-08-18,1180.0
+2025-08-19,1185.0
+2025-08-20,1135.0
+2025-08-21,1150.0
+2025-08-22,1135.0
+2025-08-25,1170.0
+2025-08-26,1175.0
+2025-08-27,1190.0
+2025-08-28,1160.0
+2025-08-29,1160.0
+2025-09-01,1165.0
+2025-09-02,1160.0
+2025-09-03,1160.0
+2025-09-04,1160.0
+2025-09-05,1180.0
+2025-09-08,1180.0
+2025-09-09,1200.0
+2025-09-10,1225.0
+2025-09-11,1240.0
+2025-09-12,1260.0
+2025-09-15,1255.0
+2025-09-16,1280.0
+2025-09-17,1265.0
+2025-09-18,1285.0
+2025-09-19,1265.0
+2025-09-22,1295.0
+2025-09-23,1340.0
+2025-09-24,1340.0
+2025-09-25,1320.0
+2025-09-26,1300.0
+2025-09-30,1305.0
+2025-10-01,1325.0
+2025-10-02,1365.0
+2025-10-03,1400.0
+2025-10-07,1435.0
+2025-10-08,1415.0
+2025-10-09,1440.0
+2025-10-13,1415.0
+2025-10-14,1425.0
+2025-10-15,1465.0
+2025-10-16,1485.0
+2025-10-17,1450.0
+2025-10-20,1480.0
+2025-10-21,1480.0
+2025-10-22,1460.0
+2025-10-23,1450.0
+2025-10-27,1480.0
+2025-10-28,1475.0
+2025-10-29,1505.0
+2025-10-30,1505.0
+2025-10-31,1500.0
+2025-11-03,1510.0
+2025-11-04,1505.0
+2025-11-05,1460.0
+2025-11-06,1465.0
+2025-11-07,1460.0
+2025-11-10,1475.0
+2025-11-11,1465.0
+2025-11-12,1475.0
+2025-11-13,1460.0
+2025-11-14,1430.0
+2025-11-17,1445.0
+2025-11-18,1405.0
+2025-11-19,1395.0
+2025-11-20,1455.0
+2025-11-21,1385.0
+2025-11-24,1375.0
+2025-11-25,1415.0
+2025-11-26,1440.0
+2025-11-27,1435.0
+2025-11-28,1440.0
+2025-12-01,1410.0
+2025-12-02,1430.0
+2025-12-03,1450.0
+2025-12-04,1445.0
+2025-12-05,1460.0
+2025-12-08,1495.0
+2025-12-09,1480.0
+2025-12-10,1505.0
+2025-12-11,1470.0
+2025-12-12,1480.0
+2025-12-15,1450.0
+2025-12-16,1435.0
+2025-12-17,1430.0
+2025-12-18,1430.0
+2025-12-19,1430.0
+2025-12-22,1465.0
+2025-12-23,1490.0
+2025-12-24,1495.0
+2025-12-26,1510.0
+2025-12-29,1530.0
+2025-12-30,1520.0
+2025-12-31,1550.0
+2026-01-02,1585.0
+2026-01-05,1670.0
+2026-01-06,1705.0
+2026-01-07,1675.0
+2026-01-08,1685.0
+2026-01-09,1680.0
+2026-01-12,1690.0
+2026-01-13,1710.0
+2026-01-14,1710.0
+2026-01-15,1690.0
+2026-01-16,1740.0
+2026-01-19,1760.0
+2026-01-20,1775.0
+2026-01-21,1740.0
+2026-01-22,1760.0
+2026-01-23,1770.0
+2026-01-26,1755.0
+2026-01-27,1780.0
+2026-01-28,1820.0
+2026-01-29,1805.0
+2026-01-30,1775.0
+2026-02-02,1765.0
+2026-02-03,1800.0
+2026-02-04,1785.0
+2026-02-05,1765.0
+2026-02-06,1780.0
+2026-02-09,1815.0
+2026-02-10,1880.0
+2026-02-11,1915.0
+2026-02-23,1900.0
+2026-02-24,1965.0
+2026-02-25,2015.0
+2026-02-26,1995.0
+2026-03-02,1975.0
+2026-03-03,1935.0
+2026-03-04,1865.0
+2026-03-05,1900.0
+2026-03-06,1890.0
+2026-03-09,1810.0
+2026-03-10,1850.0
+2026-03-11,1940.0
+2026-03-12,1885.0
+2026-03-13,1865.0
+2026-03-16,1845.0
+2026-03-17,1870.0
+2026-03-18,1905.0
+2026-03-19,1850.0
+2026-03-20,1840.0
+2026-03-23,1810.0
+2026-03-24,1810.0
+2026-03-25,1845.0
+2026-03-26,1840.0
+2026-03-27,1820.0
+2026-03-30,1780.0
+2026-03-31,1760.0
+2026-04-01,1855.0
+2026-04-02,1810.0
+2026-04-07,1860.0
+2026-04-08,1950.0
+2026-04-09,1955.0
+2026-04-10,2000.0
+2026-04-13,1990.0
+2026-04-14,2055.0
+2026-04-15,2080.0
+2026-04-16,2085.0
+2026-04-17,2030.0
+2026-04-20,2025.0
+2026-04-21,2050.0
+2026-04-22,2050.0
+2026-04-23,2080.0
+2026-04-24,2185.0
+2026-04-27,2265.0
+2026-04-28,2215.0
+2026-04-29,2180.0
+2026-04-30,2135.0
+2026-05-04,2275.0
+2026-05-05,2250.0
+2026-05-06,2250.0
+2026-05-07,2310.0
+2026-05-08,2290.0
+2026-05-11,2235.0
+2026-05-12,2255.0
+2026-05-13,2220.0
+2026-05-14,2270.0
+2026-05-15,2265.0
+2026-05-18,2240.0
+2026-05-19,2205.0
+2026-05-20,2185.0
+2026-05-21,2230.0
+2026-05-22,2255.0
+2026-05-25,2310.0
+2026-05-26,2270.0
+2026-05-27,2300.0
+2026-05-28,2295.0
+2026-05-29,2355.0
+2026-06-01,2355.0
+2026-06-02,2380.0
+2026-06-03,2425.0
+2026-06-04,2385.0
+2026-06-05,2365.0
+2026-06-08,2295.0
+2026-06-09,2305.0
+2026-06-10,2255.0
+2026-06-11,2250.0
+2026-06-12,2310.0
+2026-06-15,2375.0
+2026-06-16,2400.0
+2026-06-17,2385.0
+2026-06-18,2410.0
+2026-06-22,2510.0
+2026-06-23,2490.0
+2026-06-24,2390.0
+2026-06-25,2390.0
+2026-06-26,2340.0
+2026-06-29,2370.0
+2026-06-30,2410.0
+2026-07-01,2505.0
+2026-07-02,2465.0
+2026-07-03,2445.0
+2026-07-06,2460.0
+2026-07-07,2440.0
+2026-07-08,2465.0
+2026-07-09,2415.0
+2026-07-13,2440.0
+2026-07-14,2420.0
+2026-07-15,2440.0
+2026-07-16,2470.0
+2026-07-17,2290.0
+2026-07-20,2320.0
+2026-07-21,2410.0
+2026-07-22,2400.0
+2026-07-23,2405.0
+2026-07-24,2350.0
+2026-07-27,2350.0
+2026-07-28,2280.0
+2026-07-29,2200.0
+2026-07-30,2205.0
+2026-07-31,2425.0
+2026-08-03,2370.0
+2026-08-04,2320.0
+2026-08-05,2405.0
+2026-08-06,2365.0
+2026-08-07,2370.0
+2026-08-10,2380.0
+2026-08-11,2395.0
+2026-08-12,2415.0
+2026-08-13,2435.0
+2026-08-14,2395.0
+2026-08-17,2400.0
+2026-08-18,2380.0
+2026-08-19,2350.0
+2026-08-20,2375.0
+2026-08-21,2410.0
+2026-08-24,2375.0
+2026-08-25,2400.0
+2026-08-26,2415.0
+2026-08-27,2410.0
+2026-08-28,2420.0
+2026-08-31,2405.0
+2026-09-01,2440.0
+2026-09-02,2385.0
+2026-09-03,2390.0
+2026-09-04,2410.0
+2026-09-07,2460.0
+2026-09-08,2470.0
+2026-09-09,2465.0
+2026-09-10,2450.0
+2026-09-11,2410.0
+2026-09-14,2380.0
+2026-09-15,2385.0
+2026-09-16,2380.0
+2026-09-17,2425.0
+2026-09-18,2460.0
+2026-09-21,2480.0
+2026-09-22,2460.0
+2026-09-23,2500.0
+2026-09-24,2475.0
+2026-09-29,2475.0
+2026-09-30,2480.0
+2026-10-01,2510.0
+2026-10-02,2500.0
+2026-10-05,2575.0
+2026-10-06,2585.0
+2026-10-07,2585.0
+2026-10-08,2550.0
+2026-10-12,2540.0
+2026-10-13,2490.0
+2026-10-14,2490.0`, name: '2330.TW 日收盤價', unit: 'NT$' }
+};
+// sklearn train_test_split(test_size=0.2, random_state=0) on the built-in 50_Startups.csv (row order matters for CV)
+const SK_TRAIN_50 = [33, 35, 26, 34, 18, 7, 14, 45, 48, 29, 15, 30, 32, 16, 42, 20, 43, 8, 13, 25, 5, 17, 40, 49, 1, 12, 37, 24, 6, 23, 36, 21, 19, 9, 39, 46, 3, 0, 47, 44];
+const SK_TEST_50 = [28, 11, 10, 41, 2, 27, 38, 31, 22, 4];
+const COLORS = { 'Lasso': '#4f46e5', 'Forward SFS': '#ff7f0e', 'RFE': '#2ca02c', 'ElasticNet': '#d62728', 'Exhaustive': '#9467bd' };
+const BADGE = { 'Lasso': 'L1 Path', 'Forward SFS': 'Greedy CV', 'RFE': 'Backward', 'ElasticNet': 'L1 + L2', 'Exhaustive': 'Best Subset' };
+const ICON = { 'Lasso': 'fa-filter', 'Forward SFS': 'fa-arrow-trend-up', 'RFE': 'fa-scissors', 'ElasticNet': 'fa-diagram-project', 'Exhaustive': 'fa-magnifying-glass-chart' };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (v, d = 2) => Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const norm = t => t.replace(/\r/g, '').trim();
+const S = { problem: 'mlr', ds: null, ctx: null, res: null, meta: null, algo: 'Lasso', k: 1, unit: '$', label: '' };
+const charts = {};
+const money = v => (v < 0 ? '-' : '') + S.unit + fmt(Math.abs(v));
+
+function status(msg, err = false) { $('status').textContent = msg; $('status').className = err ? 'err' : ''; }
+function chart(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  if (typeof Chart === 'undefined') return;
+  cfg.options = Object.assign({ responsive: true, maintainAspectRatio: false, animation: false }, cfg.options || {});
+  charts[id] = new Chart($(id), cfg);
+}
+
+// ---------- data loading ----------
+function setDataset(text, builtin, label) {
+  const { header, data } = parseCSV(text);
+  const prof = profile(header, data), nums = prof.filter(c => c.numeric).map(c => c.name);
+  if (!nums.length) throw new Error('找不到數值欄位，請確認 CSV 格式');
+  S.ds = { header, data, prof, builtin: builtin || norm(text) === norm(DEFAULTS[S.problem].csv) };
+  S.unit = S.ds.builtin ? DEFAULTS[S.problem].unit : '';
+  S.label = label;
+  const opts = (arr, sel) => arr.map(n => `<option${n === sel ? ' selected' : ''}>${esc(n)}</option>`).join('');
+  $('target').innerHTML = opts(nums, nums.includes('Profit') ? 'Profit' : nums[nums.length - 1]);
+  $('dateCol').innerHTML = opts(header, header.find(h => /date|time|日期/i.test(h)) || header[0]);
+  $('valCol').innerHTML = opts(nums, nums.find(n => /^close$|收盤/i.test(n)) || nums.find(n => /close/i.test(n)) || nums[nums.length - 1]);
+  $('profile').textContent = `${data.length} rows × ${header.length} cols：` +
+    prof.map(c => `${c.name}（${c.numeric ? 'numeric' : 'categorical, ' + c.levels.length + ' levels'}${c.missing ? '，缺值 ' + c.missing : ''}）`).join('、');
+  compute();
+}
+async function loadURL() {
+  const url = $('url').value.trim();
+  if (!url) return loadDefault();
+  status('下載中…');
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    setDataset(await r.text(), false, url);
+  } catch (e) { status(`無法載入 ${url}：${e.message}。請確認網址指向 raw CSV，且伺服器允許跨網域讀取（CORS）。`, true); }
+}
+function loadDefault() {
+  try { setDataset(DEFAULTS[S.problem].csv, true, '內建 ' + DEFAULTS[S.problem].name); } catch (e) { status(e.message, true); }
+}
+
+// ---------- modeling ----------
+function compute() {
+  try {
+    S.problem === 'mlr' ? prepMLR() : prepAR();
+    S.res = runAll(S.ctx);
+    S.best = {};
+    ALGOS.forEach(a => { if (S.res[a]) S.best[a] = S.res[a].filter(Boolean).reduce((b, r) => (r.rmse < b.rmse ? r : b)).k; });
+    if (!S.res[S.algo] && S.algo !== 'ALL') S.algo = 'Lasso';
+    S.k = S.best[S.algo === 'ALL' ? 'Lasso' : S.algo];
+    const p = S.ctx.names.length;
+    status(`已載入：${S.label}｜train ${S.ctx.ytr.length} / test ${S.ctx.yte.length}｜${p} 個候選特徵` +
+      (p > EXHAUSTIVE_MAX ? `｜特徵超過 ${EXHAUSTIVE_MAX} 個，Exhaustive Search 已停用` : ''));
+    renderStatic();
+    update();
+  } catch (e) { status('無法建立模型：' + e.message, true); }
+}
+function prepMLR() {
+  const target = $('target').value, ratio = +$('testSize').value || 0.2, seed = +$('seed').value || 0;
+  const rows = S.ds.data.filter(r => isNum(r[target]));
+  if (rows.length < 12) throw new Error(`有效資料只有 ${rows.length} 筆，至少需要 12 筆`);
+  const D = buildDesign(S.ds.prof, rows, target);
+  if (!D.names.length) throw new Error('除了 target 之外沒有可用的特徵欄位');
+  const y = rows.map(r => Number(r[target])), g = (a, i) => i.map(j => a[j]);
+  const sp = S.ds.builtin && rows.length === 50 && seed === 0 && Math.abs(ratio - 0.2) < 1e-9
+    ? { train: SK_TRAIN_50, test: SK_TEST_50 } : splitIdx(rows.length, ratio, seed);
+  const tag = S.ds.builtin ? 'Startup #' : 'Row #';
+  S.ctx = { Xtr: g(D.X, sp.train), ytr: g(y, sp.train), Xte: g(D.X, sp.test), yte: g(y, sp.test), names: D.names, labels: sp.test.map(i => tag + i) };
+  S.meta = { kind: 'mlr', D, target };
+}
+function prepAR() {
+  const dc = $('dateCol').value, vc = $('valCol').value, ratio = +$('arTest').value || 0.2;
+  const P = Math.max(1, Math.min(30, Math.round(+$('maxLag').value || 10)));
+  let rows = S.ds.data.filter(r => isNum(r[vc]));
+  if (dc !== vc && rows.length && rows.every(r => !isNaN(Date.parse(r[dc])))) rows = rows.slice().sort((a, b) => Date.parse(a[dc]) - Date.parse(b[dc]));
+  const s = rows.map(r => Number(r[vc])), dates = rows.map((r, i) => (dc !== vc ? r[dc] : 't' + i));
+  if (s.length < P + 30) throw new Error(`資料只有 ${s.length} 筆，AR(${P}) 至少需要 ${P + 30} 筆`);
+  const L = makeLags(s, P), n = Math.floor(L.X.length * (1 - ratio));
+  const names = Array.from({ length: P }, (_, i) => `lag_${i + 1}`);
+  const Xte = L.X.slice(n), yte = L.y.slice(n);
+  S.ctx = { Xtr: L.X.slice(0, n), ytr: L.y.slice(0, n), Xte, yte, names, labels: L.idx.slice(n).map(t => dates[t]) };
+  S.meta = { kind: 'ar', s, dates, L, n, P, vc, naive: metrics(yte, Xte.map(r => r[0])) };
+}
+function current() {
+  if (S.algo !== 'ALL') return { algo: S.algo, r: S.res[S.algo][S.k - 1] };
+  let best = null;
+  ALGOS.forEach(a => { const r = S.res[a] && S.res[a][S.k - 1]; if (r && (!best || r.rmse < best.r.rmse)) best = { algo: a, r }; });
+  return best;
+}
+// ---------- static parts (per dataset) ----------
+function renderStatic() {
+  const p = S.ctx.names.length, ar = S.meta.kind === 'ar';
+  $('pMax').textContent = p;
+  $('algoTabs').innerHTML = ALGOS.map(a => `<button class="tab-btn${a === S.algo ? ' active' : ''}" data-algo="${a}" aria-pressed="${a === S.algo}"${S.res[a] ? '' : ` disabled title="特徵數超過 ${EXHAUSTIVE_MAX}，窮舉 2^p 組合太慢"`}>
+      <i class="fa-solid ${ICON[a]}"></i> ${a === 'Exhaustive' ? 'Exhaustive Search' : a === 'Lasso' ? 'Lasso (L1 Ranking)' : a}
+      <span class="badge-pill">${BADGE[a]}</span></button>`).join('') +
+    `<button class="tab-btn${S.algo === 'ALL' ? ' active' : ''}" data-algo="ALL" aria-pressed="${S.algo === 'ALL'}" style="border-left:2px solid var(--primary)"><i class="fa-solid fa-layer-group"></i> Compare All 5 Methods</button>`;
+  $('algoTabs').querySelectorAll('.tab-btn').forEach(b => (b.onclick = () => {
+    S.algo = b.dataset.algo;
+    $('algoTabs').querySelectorAll('.tab-btn').forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b); });
+    if (S.algo !== 'ALL') S.k = S.best[S.algo];
+    update();
+  }));
+  // hero
+  const lasso = S.res.Lasso, bk = S.best.Lasso, full = lasso[p - 1], sw = lasso[bk - 1];
+  $('heroTitle').textContent = ar ? 'Auto Regression：Lag Selection & Parsimony Analysis' : 'Feature Selection & Parsimony Analysis';
+  $('heroText').innerHTML = ar
+    ? `把 Problem 1 的 workflow 直接套到時間序列：以 <strong>lag_1 … lag_${p}</strong> 作為候選特徵，用同樣 5 種特徵選擇演算法挑出最佳 lag 組合，再以 OLS 建立 AR 模型，並與 naive baseline（y<sub>t</sub> = y<sub>t-1</sub>）比較。`
+    : `Compare 5 Machine Learning Feature Selection Algorithms (<strong>Lasso</strong>, <strong>Forward SFS</strong>, <strong>RFE</strong>, <strong>ElasticNet</strong>, <strong>Exhaustive Search</strong>) against Baseline OLS. Explore the bias-variance tradeoff across feature counts k = 1 … ${p}, pinpointing the sweet spot and the overfitting cliff.`;
+  const pills = [`<i class="fa-solid fa-database"></i> ${esc(S.label.replace(/^內建 /, ''))}（${S.ctx.ytr.length + S.ctx.yte.length} samples）`,
+    `<i class="fa-solid fa-bolt"></i> ${ALGOS.filter(a => S.res[a]).length} Selection Methods`,
+    `<i class="fa-solid fa-star" style="color:#34d399"></i> Sweet Spot（Lasso）: k=${bk} (${money(sw.rmse)} RMSE)`];
+  if (full && full.rmse > sw.rmse && bk !== p) pills.push(`<i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24"></i> Overfitting Warning: k=${p} (${money(full.rmse)} RMSE)`);
+  if (ar) pills.push(`<i class="fa-solid fa-scale-balanced"></i> Naive baseline: ${money(S.meta.naive.RMSE)} RMSE`);
+  $('heroTags').innerHTML = pills.map(t => `<span class="hero-pill">${t}</span>`).join('');
+  // titles
+  $('predTitle').textContent = ar ? 'Live Next-Day Predictor' : `Live ${S.meta.target} Predictor`;
+  $('predSub').textContent = ar ? '預設為最後 P 個實際值；修改 lag 值即可即時預測下一期。' : 'Test predictions in real-time with the active model.';
+  $('c3Title').innerHTML = ar ? '<i class="fa-solid fa-chart-area" style="color:var(--primary)"></i> Actual vs Predicted（時間序列）'
+    : '<i class="fa-solid fa-bullseye" style="color:var(--primary)"></i> Actual vs Predicted（test set）';
+  $('c3Sub').textContent = ar ? '灰線為實際值，彩色線為 test 區間的一步預測；虛線為 train / test 分界。' : '點越靠近紅色虛線 y = x，預測越準。';
+  $('outSub').textContent = `Top absolute residuals on the out-of-sample test set（${S.ctx.yte.length} ${ar ? 'trading days' : 'samples'}）。`;
+  buildPredInputs();
+}
+// ---------- dynamic parts (per algo / k) ----------
+function kButtons() {
+  const p = S.ctx.names.length, a = S.algo === 'ALL' ? 'Lasso' : S.algo, rs = S.res[a], bk = S.best[a];
+  const overK = rs[p - 1] && rs[bk - 1] && rs[p - 1].rmse > rs[bk - 1].rmse && bk !== p ? p : null;
+  $('kGroup').innerHTML = rs.map((r, i) => {
+    const k = i + 1, cls = ['k-btn', k === bk ? 'sweet-spot' : '', k === overK ? 'overfitting' : '', k === S.k ? 'active' : ''].join(' ');
+    const nested = a !== 'Exhaustive';
+    const sub = k === bk ? '★ Sweet Spot (Min RMSE)' : k === overK ? '⚠ Full Model (Overfitting)' : !r ? 'n/a'
+      : k === 1 || !nested ? r.features.join(', ') : '+ ' + r.features.find(f => !rs[i - 1] || !rs[i - 1].features.includes(f));
+    return `<button class="${cls}" data-k="${k}" aria-pressed="${k === S.k}"${r ? '' : ' disabled'}>k = ${k} <small>(${esc(sub)})</small></button>`;
+  }).join('');
+  $('kGroup').querySelectorAll('.k-btn').forEach(b => (b.onclick = () => { S.k = +b.dataset.k; update(); }));
+}
+function metricCard(title, val, note, badge = '', cls = '') {
+  return `<div class="metric-card ${cls}"><div class="metric-title"><span>${title}</span>${badge}</div><div class="metric-val">${val}</div><div class="metric-note">${note}</div></div>`;
+}
+function update() {
+  kButtons();
+  const cur = current(); if (!cur) return;
+  const { algo, r } = cur, a = S.algo === 'ALL' ? algo : S.algo, bk = S.best[a], p = S.ctx.names.length, isSweet = S.k === bk;
+  const isOver = S.k === p && bk !== p;
+  const pb = v => (v < 1e-4 ? 'p &lt; 0.0001' : 'p = ' + v.toFixed(4));
+  let html = metricCard('Test RMSE', money(r.rmse), 'Lower is better',
+      isSweet ? '<span class="badge-tag badge-green"><i class="fa-solid fa-award"></i> Optimal</span>' : isOver ? '<span class="badge-tag badge-amber"><i class="fa-solid fa-triangle-exclamation"></i> Overfitting</span>' : `<span class="badge-tag badge-blue">k = ${S.k}</span>`,
+      isSweet ? 'sweet' : isOver ? 'alert' : '') +
+    metricCard('R² Score', r.r2.toFixed(4), `Explains ${(r.r2 * 100).toFixed(2)}% of variance`, `<span class="badge-tag badge-blue"><i class="fa-solid fa-circle-check"></i> ${(r.r2 * 100).toFixed(1)}% Fit</span>`, isSweet ? 'sweet' : '') +
+    metricCard('Adjusted R²', r.adj_r2 == null ? 'N/A' : r.adj_r2.toFixed(4), 'Penalizes redundant parameters') +
+    metricCard('Mean Absolute Error', money(r.mae), 'Average prediction error') +
+    metricCard('F-Statistic', fmt(r.f_stat, 1), r.f_pvalue < 0.05 ? 'Model is statistically significant' : 'Model is not significant',
+      `<span class="badge-tag ${r.f_pvalue < 0.05 ? 'badge-green' : 'badge-amber'}">${pb(r.f_pvalue)}</span>`);
+  if (S.meta.kind === 'ar') {
+    const nv = S.meta.naive.RMSE, better = r.rmse < nv;
+    html += metricCard('Naive Baseline RMSE', money(nv), better ? `AR 比 naive 好 ${money(nv - r.rmse)}` : `AR 沒有贏過 naive（差 ${money(r.rmse - nv)}）`,
+      `<span class="badge-tag ${better ? 'badge-green' : 'badge-amber'}">${better ? 'AR wins' : 'Naive wins'}</span>`, better ? '' : 'alert');
+  }
+  $('metricsGrid').innerHTML = html;
+  $('featCount').textContent = r.features.length;
+  $('chips').innerHTML = r.features.map(f => `<span class="feature-chip">${esc(f)}</span>`).join('');
+  const nt = $('notice');
+  if (S.algo === 'ALL') { nt.className = 'badge-tag badge-blue'; nt.innerHTML = `<i class="fa-solid fa-layer-group"></i> k = ${S.k} 時 test RMSE 最低的方法：${algo}`; }
+  else if (isSweet) { nt.className = 'badge-tag badge-green'; nt.innerHTML = `<i class="fa-solid fa-star"></i> Occam's Razor：${a} 在 k = ${bk} 得到最低 test RMSE（${money(r.rmse)}）與 R²（${r.r2.toFixed(4)}）。`; }
+  else if (isOver) { nt.className = 'badge-tag badge-amber'; nt.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Overfitting Warning：放入全部 ${p} 個特徵，test RMSE 升到 ${money(r.rmse)}。`; }
+  else { nt.className = 'badge-tag badge-blue'; nt.innerHTML = `<i class="fa-solid fa-circle-info"></i> Model evaluated with ${S.k} predictors（${a}）。`; }
+  $('rmseBadge2').textContent = S.algo === 'ALL' ? 'Comparing 5 Methods' : a;
+  $('r2Badge2').textContent = `Peak at k = ${bk}`;
+  renderEquation(r); renderCoefs(r); renderOutliers(r); renderCharts(cur); updatePred();
+}
+function renderEquation(r) {
+  const y = S.meta.kind === 'ar' ? 'y<sub>t</sub>' : esc(S.meta.target);
+  const ic = r.coefficients[0].coef;
+  const parts = [`<span class="eq-intercept">${fmt(ic)}</span>`];
+  r.coefficients.slice(1).forEach(c => {
+    const v = S.meta.kind === 'ar' ? c.feature.replace('lag_', 'y<sub>t-') + '</sub>' : esc(c.feature);
+    parts.push(`${c.coef >= 0 ? '<span class="eq-pos">+</span>' : '<span class="eq-neg">−</span>'} ${Math.abs(c.coef).toFixed(4)} × <span class="eq-var">(${v})</span>`);
+  });
+  $('equationBox').innerHTML = `<strong>${y}</strong> = ${parts.join(' ')}`;
+}
+function renderCoefs(r) {
+  const dec = v => (Math.abs(v) >= 100 ? fmt(v, 2) : v.toFixed(4));
+  $('coefBody').innerHTML = r.coefficients.map(c => {
+    const pv = c.pvalue < 0.05
+      ? `<span class="badge-tag badge-green">${c.pvalue < 1e-4 ? '&lt; 0.0001' : c.pvalue.toFixed(4)} <i class="fa-solid fa-check"></i></span>`
+      : `<span class="badge-tag badge-amber">${c.pvalue.toFixed(4)} (n.s.)</span>`;
+    const vif = c.vif == null ? '-' : c.vif < 5 ? `<span class="badge-tag badge-green">${c.vif.toFixed(2)} (Safe)</span>` : `<span class="badge-tag badge-amber">${c.vif.toFixed(2)} (Collinear)</span>`;
+    return `<tr><td><strong>${esc(c.feature)}</strong></td><td class="mono" style="font-weight:600">${dec(c.coef)}</td><td>${dec(c.stderr)}</td>
+      <td>${c.tstat.toFixed(3)}</td><td>${pv}</td><td style="font-size:12px;color:var(--s600)">[${dec(c.ci_lower)}, ${dec(c.ci_upper)}]</td><td>${vif}</td></tr>`;
+  }).join('');
+}
+function renderOutliers(r) {
+  $('outBody').innerHTML = r.outliers.map(o => {
+    const high = o.abs_error > r.rmse;
+    return `<tr><td style="font-weight:700">#${o.rank}</td><td>${esc(o.index)}</td><td class="mono">${money(o.actual)}</td><td class="mono">${money(o.predicted)}</td>
+      <td style="color:${o.residual >= 0 ? '#059669' : '#dc2626'};font-weight:600">${o.residual >= 0 ? '+' : ''}${money(o.residual)}</td>
+      <td>${money(o.abs_error)}</td><td>${o.pct_error.toFixed(2)}%</td>
+      <td>${high ? '<span class="badge-tag badge-amber"><span class="status-dot dot-amber"></span> High Residual (&gt; RMSE)</span>' : '<span class="badge-tag badge-green"><span class="status-dot dot-green"></span> In Range</span>'}</td></tr>`;
+  }).join('');
+}
+function renderCharts(cur) {
+  const algos = S.algo === 'ALL' ? ALGOS.filter(a => S.res[a]) : [S.algo], labels = S.ctx.names.map((_, i) => String(i + 1));
+  const ds = key => algos.map(a => {
+    const rs = S.res[a], bk = S.best[a], c = COLORS[a];
+    return { label: a, data: rs.map(r => (r ? r[key] : null)), borderColor: c, backgroundColor: c, borderWidth: 2.5, tension: 0.1,
+      pointRadius: rs.map((_, i) => (i + 1 === S.k ? 7 : i + 1 === bk ? 6 : 4)), pointBackgroundColor: rs.map((_, i) => (i + 1 === bk ? '#10b981' : c)),
+      pointBorderColor: '#fff', pointBorderWidth: 2 };
+  });
+  const opts = yt => ({
+    plugins: { legend: { display: S.algo === 'ALL' }, tooltip: { callbacks: { afterLabel: ctx => {
+      const r = S.res[ctx.dataset.label][ctx.dataIndex]; return r ? 'Features: ' + r.features.join(', ') : ''; } } } },
+    scales: { x: { title: { display: true, text: 'Number of Features (k)' } }, y: { title: { display: true, text: yt } } },
+    onClick: (e, el) => { if (el.length) { S.k = el[0].index + 1; update(); } }
+  });
+  chart('rmseChart', { type: 'line', data: { labels, datasets: ds('rmse') }, options: opts('RMSE (Lower is Better)') });
+  chart('r2Chart', { type: 'line', data: { labels, datasets: ds('r2') }, options: opts('R-squared (Higher is Better)') });
+  const r = cur.r, col = COLORS[cur.algo];
+  if (S.meta.kind === 'mlr') {
+    const lo = Math.min(...r.ytest, ...r.ypred), hi = Math.max(...r.ytest, ...r.ypred);
+    chart('c3Chart', { type: 'scatter', data: { datasets: [
+      { label: 'Test samples', data: r.ytest.map((v, i) => ({ x: v, y: r.ypred[i] })), backgroundColor: col, pointRadius: 6 },
+      { label: 'y = x', type: 'line', data: [{ x: lo, y: lo }, { x: hi, y: hi }], borderColor: '#ef4444', borderDash: [6, 6], pointRadius: 0 }] },
+      options: { scales: { x: { title: { display: true, text: 'Actual' } }, y: { title: { display: true, text: 'Predicted' } } } } });
+  } else {
+    const M = S.meta, n = M.n, yAll = M.L.y, lab = M.L.idx.map(t => M.dates[t]);
+    const pred = yAll.map((_, i) => (i >= n ? r.ypred[i - n] : null));
+    chart('c3Chart', { type: 'line', data: { labels: lab, datasets: [
+      { label: 'Actual', data: yAll, borderColor: '#94a3b8', borderWidth: 1.5, pointRadius: 0 },
+      { label: `${cur.algo} k=${S.k} prediction (test)`, data: pred, borderColor: col, borderWidth: 2, pointRadius: 0 },
+      { label: 'Train / Test split', data: yAll.map((v, i) => (i === n ? v : null)), borderColor: '#0f172a', pointRadius: yAll.map((_, i) => (i === n ? 6 : 0)), pointStyle: 'line', showLine: false }] },
+      options: { interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: { maxTicksLimit: 10 } } } } });
+  }
+}
+// ---------- live predictor ----------
+function buildPredInputs() {
+  const box = $('predInputs');
+  if (S.meta.kind === 'ar') {
+    const s = S.meta.s;
+    box.innerHTML = S.ctx.names.map((nm, i) => `<div class="input-group" data-feat="${i}">
+      <div class="input-label-row"><label for="pi${i}">${nm}（y<sub>t-${i + 1}</sub>，${esc(S.meta.dates[s.length - 1 - i])}）</label><span class="unusedTag"></span></div>
+      <input type="number" id="pi${i}" class="input-field" value="${s[s.length - 1 - i]}" step="any"></div>`).join('');
+  } else {
+    const D = S.meta.D, rows = S.ds.data;
+    box.innerHTML = D.spec.map((sp, i) => {
+      if (!sp.numeric) return `<div class="input-group" data-col="${i}"><div class="input-label-row"><label for="pi${i}">${esc(sp.col)}</label><span class="unusedTag"></span></div>
+        <select id="pi${i}" class="input-field">${sp.levels.map((l, j) => `<option value="${esc(l)}">${esc(l)}${j === 0 ? '（Reference）' : ''}</option>`).join('')}</select></div>`;
+      const vals = rows.map(r => r[sp.col]).filter(isNum).map(Number), lo = Math.min(0, ...vals), hi = Math.max(...vals) * 1.2 || 1;
+      const step = Math.max((hi - lo) / 100, 1e-6), v = Math.round(sp.mean);
+      return `<div class="input-group" data-col="${i}"><div class="input-label-row"><label for="pi${i}">${esc(sp.col)}</label><span class="unusedTag"></span></div>
+        <input type="number" id="pi${i}" class="input-field" value="${v}" step="any">
+        <input type="range" id="pr${i}" class="range-slider" min="${lo}" max="${hi}" step="${step}" value="${v}" aria-label="${esc(sp.col)} slider"></div>`;
+    }).join('');
+    D.spec.forEach((sp, i) => {
+      const n = $('pi' + i), rg = $('pr' + i);
+      if (rg) { rg.oninput = () => { n.value = rg.value; updatePred(); }; n.addEventListener('input', () => { rg.value = n.value; }); }
+    });
+  }
+  box.querySelectorAll('input[type=number],select').forEach(el => el.addEventListener('input', updatePred));
+}
+function updatePred() {
+  const cur = current(); if (!cur) return;
+  const r = cur.r, ar = S.meta.kind === 'ar';
+  let x;
+  if (ar) x = S.ctx.names.map((_, i) => Number($('pi' + i).value) || 0);
+  else { const row = {}; S.meta.D.spec.forEach((sp, i) => (row[sp.col] = $('pi' + i).value)); x = S.meta.D.encode(row); }
+  // dim inputs not in the active model
+  if (ar) $('predInputs').querySelectorAll('[data-feat]').forEach(g => { const u = !r.cols.includes(+g.dataset.feat); g.classList.toggle('unused', u); g.querySelector('.unusedTag').textContent = u ? '未使用' : ''; });
+  else {
+    let off = 0;
+    S.meta.D.spec.forEach((sp, i) => {
+      const idx = sp.names.map((_, j) => off + j); off += sp.names.length;
+      const g = $('predInputs').querySelector(`[data-col="${i}"]`), u = !idx.some(j => r.cols.includes(j));
+      g.classList.toggle('unused', u); g.querySelector('.unusedTag').textContent = u ? '未使用' : '';
+    });
+  }
+  const pred = r.model.intercept + r.cols.reduce((s, j, i) => s + r.model.coef[i] * x[j], 0);
+  const contrib = r.cols.map((j, i) => [S.ctx.names[j], r.model.coef[i] * x[j]]).filter(([, v]) => v !== 0)
+    .map(([n, v]) => `${esc(n)}: ${v >= 0 ? '+' : '−'}${S.unit}${fmt(Math.abs(v), 0)}`);
+  $('predLabel').textContent = ar ? 'Predicted Next Close (t+1)' : S.ds.builtin ? 'Predicted Startup Profit' : `Predicted ${S.meta.target}`;
+  $('predOut').textContent = money(pred);
+  let note = `Active predictors: ${r.features.map(esc).join(', ')}<br><span style="font-size:11px;color:#cbd5e1">(Intercept ${money(r.model.intercept)} | ${contrib.join(' | ')})</span>`;
+  if (ar) {
+    const h = x.slice().reverse(), fc = []; // h: oldest..newest
+    for (let s = 0; s < 5; s++) { const lag = i => h[h.length - 1 - i]; const v = r.model.intercept + r.cols.reduce((a, j, i) => a + r.model.coef[i] * lag(j), 0); fc.push(v); h.push(v); }
+    note += `<br>遞迴預測 t+1…t+5：${fc.map(v => money(v)).join('、')}`;
+  }
+  $('predNote').innerHTML = note;
+}
+
+// ---------- wiring ----------
+function setProblem(p) {
+  S.problem = p; S.algo = 'Lasso';
+  const ar = p === 'ar';
+  document.querySelectorAll('.mlrOnly').forEach(e => e.classList.toggle('hidden', ar));
+  document.querySelectorAll('.arOnly').forEach(e => e.classList.toggle('hidden', !ar));
+  $('titleText').textContent = ar ? '2330.TW Auto Regression Explorer' : '50 Startups Multiple Linear Regression Explorer';
+  $('crumb').textContent = ar ? '2330.TW Lag Progression' : '50 Startups Feature Progression';
+  $('url').value = '';
+  $('url').placeholder = ar ? 'https://.../prices.csv（需有日期欄與數值欄）' : 'https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv';
+  loadDefault();
+}
+$('problem').onchange = () => setProblem($('problem').value);
+$('btnLoad').onclick = loadURL;
+$('url').addEventListener('keydown', e => { if (e.key === 'Enter') loadURL(); });
+$('btnDefault').onclick = () => { $('url').value = ''; loadDefault(); };
+$('file').onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { setDataset(t, false, f.name); } catch (er) { status(er.message, true); } }); };
+$('btnRun').onclick = () => S.ds && compute();
+['target', 'dateCol', 'valCol'].forEach(id => ($(id).onchange = () => S.ds && compute()));
+setProblem('mlr');
+
+</script>
+</body>
+</html>
