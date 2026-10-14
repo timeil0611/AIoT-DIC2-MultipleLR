@@ -3,137 +3,261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIoT HW：Multiple LR (50 Startups) &amp; Auto Regression (2330.TW)</title>
+<title>CRISP-DM Regression Explorer：50 Startups MLR &amp; 2330.TW Auto Regression</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-:root{color-scheme:light;--p:#4f46e5;--pd:#312e81;--bg:#f8fafc;--bd:#e2e8f0;--tx:#1e293b;--mut:#64748b;--ok:#059669}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
-header{background:linear-gradient(135deg,#1e1b4b,#3730a3);color:#fff;padding:28px 24px}
-header h1{margin:0 0 6px;font-size:24px}
-header p{margin:0;color:#c7d2fe;font-size:14px}
-main{max-width:1200px;margin:0 auto;padding:20px}
-.card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:20px}
-.card h2{margin:0 0 12px;font-size:18px}
-.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
-.field{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:#334155}
-input,select,button{font:inherit;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:var(--tx)}
-input:focus,select:focus,button:focus,tr:focus{outline:3px solid rgba(79,70,229,.4);outline-offset:1px}
-input[type=url]{min-width:380px}
-button{background:var(--p);color:#fff;border-color:var(--p);cursor:pointer;font-weight:600}
-button.secondary{background:#fff;color:var(--p)}
-#status{font-size:13px;color:#334155;margin-top:12px}
+:root{color-scheme:light;--primary-dark:#343090;--primary:#4f46e5;--primary-light:#6366f1;--primary-subtle:#eef2ff;--emerald:#10b981;--emerald-subtle:#ecfdf5;--amber:#f59e0b;--amber-subtle:#fffbeb;--rose:#f43f5e;
+--s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;--s400:#94a3b8;--s500:#64748b;--s600:#475569;--s700:#334155;--s800:#1e293b;--s900:#0f172a;
+--r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--sh-sm:0 1px 3px 0 rgba(0,0,0,.05);--sh-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);--sh-lg:0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -4px rgba(0,0,0,.04)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Noto Sans TC',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--s50);color:var(--s800);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Outfit','Noto Sans TC',sans-serif;font-weight:700;color:var(--s900)}
+.container{max-width:1380px;margin:0 auto;padding:24px 20px 60px}
+.top-header{background:#fff;border-bottom:1px solid var(--s200);padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.header-inner{max-width:1380px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.breadcrumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--s500);margin-bottom:4px}
+.header-title-group h1{font-size:24px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand-badge{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:9999px;letter-spacing:.04em}
+.header-actions{display:flex;align-items:center;gap:12px}
+.ref-btn{display:inline-flex;align-items:center;gap:8px;background:var(--s100);color:var(--s700);border:1px solid var(--s200);padding:8px 14px;border-radius:var(--r-md);font-size:13px;font-weight:600;text-decoration:none}
+.ref-btn:hover{background:#fff;border-color:var(--primary-light);color:var(--primary)}
+.hero-card{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 40%,#3730a3 100%);color:#fff;border-radius:var(--r-xl);padding:36px 40px;margin-bottom:28px;box-shadow:var(--sh-lg);position:relative;overflow:hidden}
+.hero-card::after{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(99,102,241,.25) 0%,transparent 70%);pointer-events:none}
+.hero-card h2{font-size:32px;color:#fff;margin-bottom:12px;line-height:1.25}
+.hero-card p{font-size:15px;color:#c7d2fe;max-width:820px;line-height:1.6}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.hero-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#e0e7ff;font-size:12px;font-weight:500;padding:5px 12px;border-radius:9999px;display:flex;align-items:center;gap:6px}
+.card,.controls-wrapper{background:#fff;border-radius:var(--r-lg);border:1px solid var(--s200);box-shadow:var(--sh-sm);padding:24px}
+.controls-wrapper{padding:20px 24px;margin-bottom:24px}
+.card:hover{box-shadow:var(--sh-md);border-color:var(--s300)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.card-title-group h3{font-size:18px;display:flex;align-items:center;gap:8px}
+.card-subtitle{font-size:13px;color:var(--s500);margin-top:2px}
+.control-label{font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--s500);margin-bottom:10px;display:block}
+.tabs-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.tab-btn,.k-btn{font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border-radius:var(--r-md);font-weight:600;color:var(--s700);transition:background .2s,border-color .2s,color .2s}
+.tab-btn{padding:10px 18px;background:var(--s50);border:1px solid var(--s200);font-size:13.5px}
+.tab-btn:hover:not(:disabled){background:var(--primary-subtle);border-color:var(--primary-light);color:var(--primary)}
+.tab-btn.active{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff;box-shadow:0 4px 10px rgba(52,48,144,.25)}
+.tab-btn:disabled{opacity:.45;cursor:not-allowed}
+.tab-btn .badge-pill{font-size:10px;padding:2px 7px;border-radius:9999px;background:rgba(0,0,0,.06)}
+.tab-btn.active .badge-pill{background:rgba(255,255,255,.25);color:#fff}
+.k-selector-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.k-btn{padding:9px 16px;border:1px solid var(--s200);background:#fff;font-size:13px}
+.k-btn:hover{border-color:var(--primary);color:var(--primary)}
+.k-btn.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 10px rgba(79,70,229,.25)}
+.k-btn.sweet-spot{border-color:var(--emerald);background:var(--emerald-subtle);color:#065f46}
+.k-btn.sweet-spot.active{background:#059669;border-color:#059669;color:#fff}
+.k-btn.overfitting{border-color:var(--amber)}
+.k-btn.overfitting.active{background:#d97706;border-color:#d97706;color:#fff}
+.k-btn small{font-weight:400;font-size:11px}
+:focus-visible{outline:3px solid rgba(79,70,229,.45);outline-offset:2px}
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:24px}
+.metric-card{background:#fff;border-radius:var(--r-lg);border:1px solid var(--s200);padding:20px;position:relative;overflow:hidden;box-shadow:var(--sh-sm)}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--primary)}
+.metric-card.sweet::before{background:var(--emerald)}
+.metric-card.alert::before{background:var(--amber)}
+.metric-title{font-size:12px;font-weight:600;color:var(--s500);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.metric-val{font-size:26px;font-family:'Outfit',sans-serif;font-weight:700;color:var(--s900);line-height:1.1;margin-bottom:6px}
+.metric-note{font-size:12px;color:var(--s500)}
+.badge-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;display:inline-flex;align-items:center;gap:4px}
+.badge-green{background:var(--emerald-subtle);color:#065f46;border:1px solid #a7f3d0}
+.badge-blue{background:var(--primary-subtle);color:var(--primary-dark);border:1px solid #c7d2fe}
+.badge-amber{background:var(--amber-subtle);color:#92400e;border:1px solid #fde68a}
+.chips-bar{background:#fff;border:1px solid var(--s200);border-radius:var(--r-md);padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.feature-chip{background:var(--primary-subtle);color:var(--primary-dark);font-weight:600;padding:3px 8px;border-radius:6px;font-size:12px;display:inline-block}
+.dual-charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:24px;margin-bottom:24px}
+.chart-container{position:relative;height:340px;width:100%}
+.equation-card{background:linear-gradient(to right,#fcfdff,#f8faff);border:1px solid #cfcfea;border-left:5px solid var(--primary);border-radius:var(--r-md);padding:20px 24px;margin-bottom:24px}
+.equation-title{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px}
+.equation-formula{font-family:'Fira Code',ui-monospace,monospace;font-size:15px;line-height:1.8;word-break:break-word;background:#fff;padding:14px 18px;border-radius:var(--r-sm);border:1px solid var(--s200)}
+.eq-intercept{color:#4338ca;font-weight:600}.eq-var{color:#0284c7;font-weight:600}.eq-pos{color:#059669;font-weight:600}.eq-neg{color:#dc2626;font-weight:600}
+.table-responsive{overflow-x:auto;border-radius:var(--r-md);border:1px solid var(--s200)}
+table.data-table{width:100%;border-collapse:collapse;font-size:13.5px;text-align:left}
+table.data-table thead{background:var(--s100)}
+table.data-table th{padding:12px 16px;font-weight:600;color:var(--s700);font-size:12px;white-space:nowrap}
+table.data-table td{padding:12px 16px;border-bottom:1px solid var(--s100);color:var(--s700)}
+table.data-table tbody tr:hover{background:#f8faff}
+.mono{font-family:'Fira Code',ui-monospace,monospace}
+.calc-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:24px}
+.input-group{margin-bottom:16px}
+.input-group.unused{opacity:.45}
+.input-label-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--s700);gap:8px}
+.input-field{width:100%;padding:10px 14px;border:1px solid var(--s300);border-radius:var(--r-md);font-size:14px;font-family:inherit;color:var(--s900);background:#fff}
+.input-field:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+.range-slider{width:100%;margin-top:6px;accent-color:var(--primary)}
+.prediction-output-box{background:linear-gradient(135deg,#312e81 0%,#1e1b4b 100%);color:#fff;border-radius:var(--r-lg);padding:30px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;overflow:hidden}
+.pred-label{font-size:13px;letter-spacing:.04em;color:#c7d2fe;margin-bottom:10px}
+.pred-value{font-size:38px;font-family:'Outfit',sans-serif;font-weight:800;color:#34d399;margin-bottom:12px}
+.pred-formula-note{font-size:12px;color:#a5b4fc;line-height:1.5}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.dot-green{background:var(--emerald)}.dot-amber{background:var(--amber)}
+.data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end}
+.data-grid .wide{grid-column:span 2}
+.btn{font-family:inherit;font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:var(--r-md);border:1px solid var(--primary);background:var(--primary);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn.ghost{background:#fff;color:var(--primary)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+#status{font-size:13px;color:var(--s600);margin-top:14px}
 #status.err{color:#b91c1c}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.metric{border:1px solid var(--bd);border-radius:10px;padding:12px;border-top:4px solid var(--p)}
-.metric .k{font-size:12px;color:var(--mut);text-transform:uppercase}
-.metric .v{font-size:22px;font-weight:700}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:20px}
-.chart{position:relative;height:320px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:left}
-th{background:#f1f5f9}
-tbody tr.sel{background:#eef2ff}
-tbody tr.clickable{cursor:pointer}
-tbody tr.clickable:hover{background:#f5f7ff}
-.chip{display:inline-block;background:#eef2ff;color:var(--pd);border-radius:6px;padding:2px 7px;margin:1px;font-size:12px;font-weight:600}
-.eq{font-family:ui-monospace,Consolas,monospace;background:#f8fafc;border:1px solid var(--bd);border-left:4px solid var(--p);border-radius:8px;padding:12px;word-break:break-word;margin:14px 0 0}
 .hidden{display:none!important}
-.pred{font-size:28px;font-weight:800;color:var(--ok)}
-.note{font-size:13px;color:var(--mut)}
-footer{text-align:center;font-size:12px;color:var(--mut);padding:10px 20px 40px}
-@media(max-width:700px){input[type=url]{min-width:0;width:100%}.grid2{grid-template-columns:1fr}}
+footer{margin-top:50px;background:#fff;border-top:1px solid var(--s200);padding:36px 0;color:var(--s600);font-size:13.5px}
+.footer-inner{max-width:1380px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px}
+.ack-card{background:var(--s50);border:1px solid var(--s200);border-radius:var(--r-md);padding:16px 20px;margin-top:16px;line-height:1.6}
+.ack-card a{color:var(--primary);font-weight:500}
+@media (max-width:900px){.calc-grid{grid-template-columns:1fr}.data-grid .wide{grid-column:auto}}
+@media (max-width:768px){.dual-charts-grid{grid-template-columns:1fr}.hero-card{padding:24px}.hero-card h2{font-size:24px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<header>
-  <h1>CRISP-DM Regression Explorer</h1>
-  <p>Problem 1：50 Startups 多元線性回歸（forward feature selection）｜ Problem 2：台積電 2330.TW Auto Regression。全部在瀏覽器端以 OLS 計算，可輸入任意 CSV 網址。</p>
+<header class="top-header">
+  <div class="header-inner">
+    <div>
+      <div class="breadcrumbs">
+        <span><i class="fa-solid fa-house"></i> Home</span>
+        <i class="fa-solid fa-chevron-right" style="font-size:10px"></i>
+        <span>Regression Analysis</span>
+        <i class="fa-solid fa-chevron-right" style="font-size:10px"></i>
+        <span style="color:var(--s800);font-weight:600" id="crumb">50 Startups Feature Progression</span>
+      </div>
+      <div class="header-title-group">
+        <h1><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> <span id="titleText">50 Startups Multiple Linear Regression Explorer</span> <span class="brand-badge">CRISP-DM</span></h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <label for="problem" class="control-label" style="margin:0">Problem</label>
+      <select id="problem" class="input-field" style="width:auto">
+        <option value="mlr">Problem 1：50 Startups（Multiple Linear Regression）</option>
+        <option value="ar">Problem 2：2330.TW 股價（Auto Regression）</option>
+      </select>
+    </div>
+  </div>
 </header>
-<main>
-  <section class="card" aria-labelledby="h-data">
-    <h2 id="h-data">1. 選擇問題與資料集</h2>
-    <div class="row">
-      <label class="field">Problem
-        <select id="problem">
-          <option value="mlr">Problem 1：50 Startups — Multiple Linear Regression</option>
-          <option value="ar">Problem 2：2330.TW 股價 — Auto Regression</option>
-        </select>
-      </label>
-      <label class="field">Dataset CSV URL（留空＝內建資料）
-        <input type="url" id="url" placeholder="https://.../data.csv">
-      </label>
-      <button id="btnLoad">載入 URL</button>
-      <button id="btnDefault" class="secondary">使用內建資料</button>
-      <label class="field">或上傳 CSV
-        <input type="file" id="file" accept=".csv,text/csv">
-      </label>
+
+<div class="container">
+  <div class="hero-card">
+    <h2 id="heroTitle">Feature Selection &amp; Parsimony Analysis</h2>
+    <p id="heroText"></p>
+    <div class="hero-tags" id="heroTags"></div>
+  </div>
+
+  <section class="controls-wrapper" aria-labelledby="dataLbl">
+    <span class="control-label" id="dataLbl"><i class="fa-solid fa-database"></i> 0. Dataset（可輸入任意 CSV 網址）</span>
+    <div class="data-grid">
+      <label class="wide"><span class="input-label-row">CSV URL（留空＝使用內建資料）</span>
+        <input type="url" id="url" class="input-field" placeholder="https://raw.githubusercontent.com/.../data.csv"></label>
+      <label><span class="input-label-row">或上傳 CSV</span><input type="file" id="file" class="input-field" accept=".csv,text/csv"></label>
+      <div class="btn-row"><button class="btn" id="btnLoad"><i class="fa-solid fa-cloud-arrow-down"></i> 載入網址</button>
+        <button class="btn ghost" id="btnDefault"><i class="fa-solid fa-rotate-left"></i> 內建資料</button></div>
+    </div>
+    <div class="data-grid" style="margin-top:14px">
+      <label class="mlrOnly"><span class="input-label-row">Target (y)</span><select id="target" class="input-field"></select></label>
+      <label class="mlrOnly"><span class="input-label-row">Test size</span><input type="number" id="testSize" class="input-field" value="0.2" min="0.1" max="0.5" step="0.05"></label>
+      <label class="mlrOnly"><span class="input-label-row">Random seed</span><input type="number" id="seed" class="input-field" value="0"></label>
+      <label class="arOnly"><span class="input-label-row">Date column</span><select id="dateCol" class="input-field"></select></label>
+      <label class="arOnly"><span class="input-label-row">Value column</span><select id="valCol" class="input-field"></select></label>
+      <label class="arOnly"><span class="input-label-row">Max lag P（特徵 = lag_1…lag_P）</span><input type="number" id="maxLag" class="input-field" value="10" min="1" max="30"></label>
+      <label class="arOnly"><span class="input-label-row">Test ratio（時間序列後段）</span><input type="number" id="arTest" class="input-field" value="0.2" min="0.1" max="0.5" step="0.05"></label>
+      <div><button class="btn" id="btnRun"><i class="fa-solid fa-play"></i> 重新訓練</button></div>
     </div>
     <div id="status" role="status" aria-live="polite"></div>
+    <div id="profile" class="card-subtitle" style="margin-top:6px"></div>
   </section>
 
-  <section class="card" aria-labelledby="h-cfg">
-    <h2 id="h-cfg">2. Data Preparation 設定</h2>
-    <div class="row" id="cfgMLR">
-      <label class="field">Target (y)<select id="target"></select></label>
-      <label class="field">Test size<input type="number" id="testSize" value="0.2" min="0.1" max="0.5" step="0.05"></label>
-      <label class="field">Random seed<input type="number" id="seed" value="0"></label>
-      <button id="btnRunMLR">Run</button>
-    </div>
-    <div class="row hidden" id="cfgAR">
-      <label class="field">Date column<select id="dateCol"></select></label>
-      <label class="field">Value column<select id="valCol"></select></label>
-      <label class="field">Lag p <output id="lagOut">5</output><input type="range" id="lag" min="1" max="30" value="5"></label>
-      <label class="field">Test ratio（時間序列後段）<input type="number" id="arTest" value="0.2" min="0.1" max="0.5" step="0.05"></label>
-      <button id="btnRunAR">Run</button>
-    </div>
-    <p class="note" id="profile"></p>
+  <section class="controls-wrapper" aria-label="Model controls">
+    <span class="control-label"><i class="fa-solid fa-sliders"></i> 1. Select Feature Selection Algorithm</span>
+    <div class="tabs-pills" id="algoTabs" role="group"></div>
+    <span class="control-label"><i class="fa-solid fa-list-ol"></i> 2. Number of Features (k = 1 to <span id="pMax">5</span>)</span>
+    <div class="k-selector-group" id="kGroup" role="group"></div>
   </section>
-  <div id="secMLR" class="hidden">
-    <section class="card" aria-labelledby="h-fs">
-      <h2 id="h-fs">3. Modeling：Forward Selection（k = 1 … n）</h2>
-      <p class="note">每一步加入讓 test RMSE 最小的特徵。點選表格列可切換使用的模型。</p>
-      <div style="overflow-x:auto"><table>
-        <thead><tr><th>Number of Features</th><th>Selected Features</th><th>Train RMSE</th><th>Test RMSE</th><th>R-squared</th></tr></thead>
-        <tbody id="fsBody"></tbody>
-      </table></div>
-    </section>
-    <section class="card" aria-labelledby="h-ev">
-      <h2 id="h-ev">4. Evaluation（k = <span id="kNow"></span>）</h2>
-      <div class="metrics" id="mlrMetrics"></div>
-      <div class="eq" id="mlrEq"></div>
-      <div class="grid2" style="margin-top:16px">
-        <div><h3>RMSE：Training vs Test curve</h3><div class="chart"><canvas id="cFS" aria-label="train and test RMSE by number of features"></canvas></div></div>
-        <div><h3>Actual vs Predicted（test）</h3><div class="chart"><canvas id="cAVP" aria-label="actual versus predicted scatter"></canvas></div></div>
+
+  <div class="metrics-grid" id="metricsGrid"></div>
+
+  <div class="chips-bar">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <span style="font-size:13px;font-weight:700;color:var(--s700)"><i class="fa-solid fa-check-double" style="color:var(--primary)"></i> Active Predictors (<span id="featCount">0</span>):</span>
+      <div id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+    <div id="notice" class="badge-tag badge-green" style="font-size:12px;padding:4px 10px"></div>
+  </div>
+  <div class="dual-charts-grid">
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> RMSE by Number of Features</h3>
+        <div class="card-subtitle">Lower is better（test set）。點擊資料點可切換 k。</div></div>
+        <span class="badge-tag badge-blue" id="rmseBadge2"></span></div>
+      <div class="chart-container"><canvas id="rmseChart" aria-label="RMSE by number of features"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-arrow-trend-up" style="color:var(--emerald)"></i> R-squared by Number of Features</h3>
+        <div class="card-subtitle">Higher is better（test set）。</div></div>
+        <span class="badge-tag badge-green" id="r2Badge2"></span></div>
+      <div class="chart-container"><canvas id="r2Chart" aria-label="R-squared by number of features"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-header"><div class="card-title-group"><h3 id="c3Title"><i class="fa-solid fa-bullseye" style="color:var(--primary)"></i> Actual vs Predicted（test set）</h3>
+      <div class="card-subtitle" id="c3Sub">點越靠近紅色虛線 y = x，預測越準。</div></div></div>
+    <div class="chart-container"><canvas id="c3Chart" aria-label="actual versus predicted"></canvas></div>
+  </div>
+
+  <div class="equation-card">
+    <div class="equation-title"><i class="fa-solid fa-square-root-variable"></i> Fitted OLS Regression Equation</div>
+    <div class="equation-formula" id="equationBox"></div>
+  </div>
+
+  <div class="calc-grid">
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-table" style="color:var(--primary)"></i> Model Coefficients &amp; Statistical Tests</h3>
+        <div class="card-subtitle">OLS on training set：estimate, standard error, t-statistic, p-value, 95% CI, VIF.</div></div></div>
+      <div class="table-responsive"><table class="data-table">
+        <thead><tr><th>Predictor</th><th>Estimate (β)</th><th>Std. Error</th><th>t-Stat</th><th>p-Value</th><th>95% Conf. Int</th><th>VIF</th></tr></thead>
+        <tbody id="coefBody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-calculator" style="color:var(--emerald)"></i> <span id="predTitle">Live Profit Predictor</span></h3>
+        <div class="card-subtitle" id="predSub">Test predictions in real-time with the active model.</div></div>
+        <span class="badge-tag badge-green"><i class="fa-solid fa-bolt"></i> Real-time</span></div>
+      <div id="predInputs"></div>
+      <div class="prediction-output-box" aria-live="polite">
+        <div class="pred-label" id="predLabel">Predicted Startup Profit</div>
+        <div class="pred-value" id="predOut">-</div>
+        <div class="pred-formula-note" id="predNote"></div>
       </div>
-    </section>
-    <section class="card" aria-labelledby="h-dp">
-      <h2 id="h-dp">5. Deployment：即時預測</h2>
-      <div class="row" id="predForm"></div>
-      <p>Predicted <span id="predName"></span>：<span class="pred" id="predOut">-</span></p>
-    </section>
+    </div>
   </div>
 
-  <div id="secAR" class="hidden">
-    <section class="card" aria-labelledby="h-arev">
-      <h2 id="h-arev">3–4. AR(p) Modeling &amp; Evaluation</h2>
-      <div style="overflow-x:auto"><table>
-        <thead><tr><th>Model</th><th>R²</th><th>MAE</th><th>MSE</th><th>RMSE</th></tr></thead>
-        <tbody id="arBody"></tbody>
-      </table></div>
-      <div class="eq" id="arEq"></div>
-      <div style="margin-top:16px"><h3>Actual vs Predicted</h3><div class="chart"><canvas id="cAR" aria-label="time series actual versus predicted"></canvas></div></div>
-      <div style="margin-top:16px"><h3>Lag 選擇：Train vs Test RMSE（p = 1…30）</h3><div class="chart"><canvas id="cLag" aria-label="RMSE by lag order"></canvas></div></div>
-    </section>
-    <section class="card" aria-labelledby="h-fc">
-      <h2 id="h-fc">5. Deployment：遞迴預測未來 5 期</h2>
-      <div style="overflow-x:auto"><table><thead><tr><th>Step</th><th>Forecast</th></tr></thead><tbody id="fcBody"></tbody></table></div>
-      <p class="note">多步預測誤差會累積，僅供學習用途，不構成投資建議。</p>
-    </section>
+  <div class="card" style="margin-top:24px">
+    <div class="card-header"><div class="card-title-group"><h3><i class="fa-solid fa-magnifying-glass" style="color:var(--amber)"></i> Test Set Residuals &amp; Outliers Diagnostic</h3>
+      <div class="card-subtitle" id="outSub">Top absolute residuals on the out-of-sample test set.</div></div>
+      <span class="badge-tag badge-blue"><i class="fa-solid fa-filter"></i> Sorted by |Residual|</span></div>
+    <div class="table-responsive"><table class="data-table">
+      <thead><tr><th>Rank</th><th>Sample</th><th>Actual</th><th>Predicted</th><th>Residual</th><th>Abs Error</th><th>% Error</th><th>Diagnostic Status</th></tr></thead>
+      <tbody id="outBody"></tbody></table></div>
   </div>
-</main>
-<footer>AIoT HW｜CRISP-DM｜Vanilla JS + Chart.js｜內建資料：50_Startups.csv（Avik-Jain/100-Days-Of-ML-Code）、2330.TW 日收盤價（Yahoo Finance）</footer>
-<script id="core">
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div style="max-width:650px">
+      <h4 style="font-size:16px;margin-bottom:8px"><i class="fa-solid fa-building-columns"></i> CRISP-DM Regression Explorer</h4>
+      <p style="font-size:13px;line-height:1.6">同一套 workflow 套用到兩個問題：50 Startups 多元線性回歸，以及 2330.TW 以 lag_1…lag_P 為特徵的 Auto Regression。所有模型在瀏覽器端以 OLS 計算，使用 Vanilla HTML、CSS、JavaScript 與 Chart.js。</p>
+    </div>
+    <div style="max-width:550px">
+      <h4 style="font-size:14px;color:var(--s500);margin-bottom:8px">References &amp; Acknowledgments</h4>
+      <div class="ack-card">
+        <strong>Layout reference：</strong><a href="https://huanchen1107.github.io/AIoT-DIC2-MultipleLR/" target="_blank" rel="noopener">AIoT-DIC2-MultipleLR</a><br>
+        <strong>Dataset：</strong><a href="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv" target="_blank" rel="noopener">50 Startups (Avik-Jain)</a>；2330.TW 日收盤價（Yahoo Finance）<br>
+        <strong>Methodology：</strong>CRISP-DM
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
 // ===== Core numerics (no DOM) =====
 function parseCSV(text) {
   const rows = []; let row = [], cur = '', q = false;
@@ -299,11 +423,175 @@ function forecast(m, series, p, steps) {
   return out;
 }
 
-if (typeof module !== 'undefined' && typeof document === 'undefined') module.exports = { parseCSV, profile, fitOLS, metrics, splitIdx, buildDesign, pick, forwardSelection, fitAR, forecast };
 
-</script>
-<script>
-// ===== UI =====
+// ===== Feature selection + OLS inference (no DOM) =====
+// --- distributions ---
+function lgamma(x) {
+  const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+  let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t);
+  let s = 1.000000000190015; for (const v of c) s += v / ++y;
+  return -t + Math.log(2.5066282746310005 * s / x);
+}
+function betacf(a, b, x) {
+  const EPS = 3e-14, FP = 1e-300; let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap;
+  if (Math.abs(d) < FP) d = FP; d = 1 / d; let h = d;
+  for (let m = 1; m <= 300; m++) {
+    const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FP) d = FP; c = 1 + aa / c; if (Math.abs(c) < FP) c = FP; d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FP) d = FP; c = 1 + aa / c; if (Math.abs(c) < FP) c = FP; d = 1 / d;
+    const del = d * c; h *= del; if (Math.abs(del - 1) < EPS) break;
+  }
+  return h;
+}
+function ibeta(x, a, b) {
+  if (x <= 0) return 0; if (x >= 1) return 1;
+  const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b;
+}
+const tPval = (t, df) => ibeta(df / (df + t * t), df / 2, 0.5);           // two-sided
+const fPval = (F, d1, d2) => ibeta(d2 / (d2 + d1 * F), d2 / 2, d1 / 2);
+function tCrit(df) { let lo = 0, hi = 1000; for (let i = 0; i < 100; i++) { const m = (lo + hi) / 2; tPval(m, df) > 0.05 ? lo = m : hi = m; } return (lo + hi) / 2; }
+
+function invert(A) {
+  const n = A.length, M = A.map((r, i) => [...r, ...A.map((_, j) => (i === j ? 1 : 0))]);
+  for (let c = 0; c < n; c++) {
+    let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+    [M[c], M[p]] = [M[p], M[c]];
+    if (Math.abs(M[c][c]) < 1e-14) throw new Error('singular');
+    const d = M[c][c]; for (let k = 0; k < 2 * n; k++) M[c][k] /= d;
+    for (let r = 0; r < n; r++) if (r !== c) { const f = M[r][c]; if (f) for (let k = 0; k < 2 * n; k++) M[r][k] -= f * M[c][k]; }
+  }
+  return M.map(r => r.slice(n));
+}
+
+function standardize(X) {
+  const p = X[0].length, mu = [], sd = [];
+  for (let j = 0; j < p; j++) { const c = X.map(r => r[j]); mu[j] = mean(c); sd[j] = Math.sqrt(mean(c.map(v => (v - mu[j]) ** 2))) || 1; }
+  return X.map(r => r.map((v, j) => (v - mu[j]) / sd[j]));
+}
+
+// --- OLS with inference (fit on training data) ---
+function olsStats(X, y, names) {
+  const m = fitOLS(X, y), n = X.length, k = names.length, df = n - k - 1;
+  const yp = m.predict(X), ym = mean(y);
+  let sse = 0, sst = 0; for (let i = 0; i < n; i++) { sse += (y[i] - yp[i]) ** 2; sst += (y[i] - ym) ** 2; }
+  const s2 = sse / df;
+  const A = X.map(r => [1, ...r]), q = k + 1, sc = [];
+  for (let j = 0; j < q; j++) sc[j] = Math.max(...A.map(r => Math.abs(r[j]))) || 1;
+  const G = Array.from({ length: q }, (_, a) => Array.from({ length: q }, (_, b) => A.reduce((s, r) => s + r[a] * r[b], 0) / (sc[a] * sc[b])));
+  const Gi = invert(G), tc = tCrit(df), beta = [m.intercept, ...m.coef];
+  const vif = names.map((_, j) => {
+    if (k === 1) return 1;
+    const others = names.map((_, i) => i).filter(i => i !== j), xj = X.map(r => r[j]);
+    const r2 = metrics(xj, fitOLS(X.map(r => others.map(i => r[i])), xj).predict(X.map(r => others.map(i => r[i])))).R2;
+    return 1 / Math.max(1e-12, 1 - r2);
+  });
+  const coefficients = beta.map((b, a) => {
+    const se = Math.sqrt(s2 * Gi[a][a]) / sc[a], t = b / se;
+    return { feature: a === 0 ? 'Intercept (β₀)' : names[a - 1], coef: b, stderr: se, tstat: t, pvalue: tPval(Math.abs(t), df),
+             ci_lower: b - tc * se, ci_upper: b + tc * se, vif: a === 0 ? null : vif[a - 1] };
+  });
+  const F = ((sst - sse) / k) / s2;
+  return { model: m, coefficients, f_stat: F, f_pvalue: fPval(F, k, df) };
+}
+
+// --- selection algorithms: each returns subsets[k] (array of column indices), k = 1..p ---
+function regPathOrder(X, y, l1) {          // Lasso (l1=1) / ElasticNet (l1=.5) coordinate-descent path, sklearn objective
+  const Z = standardize(X), n = Z.length, p = Z[0].length, ym = mean(y), r = y.map(v => v - ym);
+  const amax = Math.max(...Z[0].map((_, j) => Math.abs(Z.reduce((s, row, i) => s + row[j] * r[i], 0)))) / (n * l1);
+  const w = new Array(p).fill(0), order = [];
+  for (let s = 0; s < 200 && order.length < p; s++) {
+    const alpha = amax * Math.pow(1e-3, s / 199);
+    for (let it = 0; it < 2000; it++) {
+      let dmax = 0;
+      for (let j = 0; j < p; j++) {
+        let rho = 0; for (let i = 0; i < n; i++) rho += Z[i][j] * r[i]; rho = rho / n + w[j];
+        const nw = Math.sign(rho) * Math.max(0, Math.abs(rho) - alpha * l1) / (1 + alpha * (1 - l1));
+        const d = nw - w[j]; if (d) { for (let i = 0; i < n; i++) r[i] -= Z[i][j] * d; w[j] = nw; dmax = Math.max(dmax, Math.abs(d)); }
+      }
+      if (dmax < 1e-10) break;
+    }
+    w.map((v, j) => [j, Math.abs(v)]).filter(([j, a]) => a > 0 && !order.includes(j)).sort((a, b) => b[1] - a[1]).forEach(([j]) => order.push(j));
+  }
+  w.map((v, j) => [j, Math.abs(v)]).filter(([j]) => !order.includes(j)).sort((a, b) => b[1] - a[1]).forEach(([j]) => order.push(j));
+  return order.map((_, i) => order.slice(0, i + 1));
+}
+function kfold(n, K = 5) {
+  const out = []; let st = 0;
+  for (let f = 0; f < K; f++) { const sz = Math.floor(n / K) + (f < n % K ? 1 : 0); out.push([st, st + sz]); st += sz; }
+  return out;
+}
+function cvR2(X, y, cols) {
+  const sc = kfold(X.length).map(([a, b]) => {
+    const tr = [...X.keys()].filter(i => i < a || i >= b), te = [...X.keys()].filter(i => i >= a && i < b);
+    const m = fitOLS(tr.map(i => cols.map(j => X[i][j])), tr.map(i => y[i]));
+    return metrics(te.map(i => y[i]), m.predict(te.map(i => cols.map(j => X[i][j])))).R2;
+  });
+  return mean(sc);
+}
+function sfsSubsets(X, y, p) {             // sklearn SequentialFeatureSelector(LinearRegression, cv=5, scoring=R²)
+  const sel = [], out = [];
+  while (sel.length < p) {
+    let best = -1, bs = -Infinity;
+    for (let j = 0; j < p; j++) if (!sel.includes(j)) { let s; try { s = cvR2(X, y, [...sel, j].sort((a, b) => a - b)); } catch (_) { s = -Infinity; } if (s > bs) { bs = s; best = j; } }
+    if (best < 0) break; sel.push(best); out.push([...sel].sort((a, b) => a - b));
+  }
+  return out;
+}
+function rfeSubsets(X, y, p) {             // RFE on standardized features, drop smallest |coef|
+  const Z = standardize(X); let cur = [...Array(p).keys()]; const out = []; out[p - 1] = [...cur];
+  while (cur.length > 1) {
+    const m = fitOLS(Z.map(r => cur.map(j => r[j])), y);
+    let mi = 0; m.coef.forEach((c, i) => { if (Math.abs(c) < Math.abs(m.coef[mi])) mi = i; });
+    cur = cur.filter((_, i) => i !== mi); out[cur.length - 1] = [...cur];
+  }
+  return out;
+}
+function exhaustiveSubsets(Xtr, ytr, Xte, yte, p) {   // best subset per k by test RMSE
+  const best = [];
+  for (let mask = 1; mask < (1 << p); mask++) {
+    const cols = []; for (let j = 0; j < p; j++) if (mask & (1 << j)) cols.push(j);
+    let e; try { e = metrics(yte, fitOLS(pick(Xtr, cols), ytr).predict(pick(Xte, cols))).RMSE; } catch (_) { continue; }
+    const k = cols.length - 1; if (!best[k] || e < best[k].e) best[k] = { e, cols };
+  }
+  return best.map(b => b.cols);
+}
+
+const ALGOS = ['Lasso', 'Forward SFS', 'RFE', 'ElasticNet', 'Exhaustive'];
+const EXHAUSTIVE_MAX = 12;
+
+// ctx: {Xtr, ytr, Xte, yte, names, labels(test sample labels)}
+function evaluateSubset(ctx, cols, cache) {
+  const key = [...cols].sort((a, b) => a - b).join(',');
+  if (cache[key] !== undefined) return cache[key] && { ...cache[key], features: cols.map(j => ctx.names[j]) };
+  let out = null;
+  try {
+    const st = olsStats(pick(ctx.Xtr, cols), ctx.ytr, cols.map(j => ctx.names[j]));
+    const yp = st.model.predict(pick(ctx.Xte, cols)), e = metrics(ctx.yte, yp), n = ctx.yte.length, k = cols.length;
+    const outliers = ctx.yte.map((a, i) => ({ index: ctx.labels[i], actual: a, predicted: yp[i], residual: a - yp[i], abs_error: Math.abs(a - yp[i]), pct_error: Math.abs((a - yp[i]) / a) * 100 }))
+      .sort((a, b) => b.abs_error - a.abs_error).slice(0, 10).map((o, i) => ({ rank: i + 1, ...o }));
+    out = { ...st, cols, rmse: e.RMSE, mae: e.MAE, mse: e.MSE, r2: e.R2, adj_r2: n - k - 1 > 0 ? 1 - (1 - e.R2) * (n - 1) / (n - k - 1) : null,
+            train_rmse: metrics(ctx.ytr, st.model.predict(pick(ctx.Xtr, cols))).RMSE, ytest: ctx.yte, ypred: yp, outliers };
+  } catch (_) { out = null; }
+  cache[key] = out;
+  return out && { ...out, features: cols.map(j => ctx.names[j]) };
+}
+function runAll(ctx) {
+  const p = ctx.names.length, cache = {}, subsets = {
+    'Lasso': regPathOrder(ctx.Xtr, ctx.ytr, 1),
+    'Forward SFS': sfsSubsets(ctx.Xtr, ctx.ytr, p),
+    'RFE': rfeSubsets(ctx.Xtr, ctx.ytr, p),
+    'ElasticNet': regPathOrder(ctx.Xtr, ctx.ytr, 0.5),
+    'Exhaustive': p <= EXHAUSTIVE_MAX ? exhaustiveSubsets(ctx.Xtr, ctx.ytr, ctx.Xte, ctx.yte, p) : null
+  };
+  const res = {};
+  for (const a of ALGOS) res[a] = subsets[a] ? subsets[a].map((c, i) => c ? { k: i + 1, ...evaluateSubset(ctx, c, cache) } : null).map(e => (e && e.model ? e : null)) : null;
+  return res;
+}
+
+
+// ===== App (DOM) =====
 const DEFAULTS = {
   mlr: { csv: `R&D Spend,Administration,Marketing Spend,State,Profit
 165349.2,136897.8,471784.1,New York,192261.83
@@ -355,7 +643,7 @@ const DEFAULTS = {
 1315.46,115816.21,297114.46,Florida,49490.75
 0,135426.92,0,California,42559.73
 542.05,51743.15,0,New York,35673.41
-0,116983.8,45173.06,California,14681.4`, url: 'https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv' },
+0,116983.8,45173.06,California,14681.4`, name: '50_Startups.csv', unit: '$' },
   ar: { csv: `Date,Close
 2024-10-14,1045.0
 2024-10-15,1070.0
@@ -842,20 +1130,24 @@ const DEFAULTS = {
 2026-10-08,2550.0
 2026-10-12,2540.0
 2026-10-13,2490.0
-2026-10-14,2490.0`, url: '' }
+2026-10-14,2490.0`, name: '2330.TW 日收盤價', unit: 'NT$' }
 };
-// sklearn train_test_split(test_size=0.2, random_state=0) test indices for the built-in 50_Startups.csv
+// sklearn train_test_split(test_size=0.2, random_state=0) on the built-in 50_Startups.csv (row order matters for CV)
+const SK_TRAIN_50 = [33, 35, 26, 34, 18, 7, 14, 45, 48, 29, 15, 30, 32, 16, 42, 20, 43, 8, 13, 25, 5, 17, 40, 49, 1, 12, 37, 24, 6, 23, 36, 21, 19, 9, 39, 46, 3, 0, 47, 44];
 const SK_TEST_50 = [28, 11, 10, 41, 2, 27, 38, 31, 22, 4];
+const COLORS = { 'Lasso': '#4f46e5', 'Forward SFS': '#ff7f0e', 'RFE': '#2ca02c', 'ElasticNet': '#d62728', 'Exhaustive': '#9467bd' };
+const BADGE = { 'Lasso': 'L1 Path', 'Forward SFS': 'Greedy CV', 'RFE': 'Backward', 'ElasticNet': 'L1 + L2', 'Exhaustive': 'Best Subset' };
+const ICON = { 'Lasso': 'fa-filter', 'Forward SFS': 'fa-arrow-trend-up', 'RFE': 'fa-scissors', 'ElasticNet': 'fa-diagram-project', 'Exhaustive': 'fa-magnifying-glass-chart' };
 
 const $ = id => document.getElementById(id);
-const fmt = (v, d = 2) => Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (v, d = 2) => Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const norm = t => t.replace(/\r/g, '').trim();
+const S = { problem: 'mlr', ds: null, ctx: null, res: null, meta: null, algo: 'Lasso', k: 1, unit: '$', label: '' };
 const charts = {};
-let DS = null; // {header, data, prof, builtin}
-let MLR = null;
+const money = v => (v < 0 ? '-' : '') + S.unit + fmt(Math.abs(v));
 
-function status(msg, err = false) { const s = $('status'); s.textContent = msg; s.className = err ? 'err' : ''; }
-
+function status(msg, err = false) { $('status').textContent = msg; $('status').className = err ? 'err' : ''; }
 function chart(id, cfg) {
   if (charts[id]) charts[id].destroy();
   if (typeof Chart === 'undefined') return;
@@ -863,23 +1155,22 @@ function chart(id, cfg) {
   charts[id] = new Chart($(id), cfg);
 }
 
+// ---------- data loading ----------
 function setDataset(text, builtin, label) {
   const { header, data } = parseCSV(text);
-  DS = { header, data, prof: profile(header, data), builtin };
-  const prob = $('problem').value, nums = DS.prof.filter(c => c.numeric).map(c => c.name);
-  if (!nums.length) throw new Error('找不到數值欄位');
+  const prof = profile(header, data), nums = prof.filter(c => c.numeric).map(c => c.name);
+  if (!nums.length) throw new Error('找不到數值欄位，請確認 CSV 格式');
+  S.ds = { header, data, prof, builtin: builtin || norm(text) === norm(DEFAULTS[S.problem].csv) };
+  S.unit = S.ds.builtin ? DEFAULTS[S.problem].unit : '';
+  S.label = label;
   const opts = (arr, sel) => arr.map(n => `<option${n === sel ? ' selected' : ''}>${esc(n)}</option>`).join('');
-  // target: prefer "Profit", else last numeric column
   $('target').innerHTML = opts(nums, nums.includes('Profit') ? 'Profit' : nums[nums.length - 1]);
-  const dateGuess = header.find(h => /date|time|日期/i.test(h)) || header[0];
-  $('dateCol').innerHTML = opts(header, dateGuess);
-  $('valCol').innerHTML = opts(nums, nums.find(n => /close|收盤/i.test(n)) || nums[nums.length - 1]);
-  $('profile').textContent = `${data.length} rows × ${header.length} cols｜` +
-    DS.prof.map(c => `${c.name}(${c.numeric ? 'num' : 'cat:' + c.levels.length}${c.missing ? ', missing ' + c.missing : ''})`).join('、');
-  status(`已載入：${label}`);
-  run(prob);
+  $('dateCol').innerHTML = opts(header, header.find(h => /date|time|日期/i.test(h)) || header[0]);
+  $('valCol').innerHTML = opts(nums, nums.find(n => /^close$|收盤/i.test(n)) || nums.find(n => /close/i.test(n)) || nums[nums.length - 1]);
+  $('profile').textContent = `${data.length} rows × ${header.length} cols：` +
+    prof.map(c => `${c.name}（${c.numeric ? 'numeric' : 'categorical, ' + c.levels.length + ' levels'}${c.missing ? '，缺值 ' + c.missing : ''}）`).join('、');
+  compute();
 }
-
 async function loadURL() {
   const url = $('url').value.trim();
   if (!url) return loadDefault();
@@ -888,133 +1179,281 @@ async function loadURL() {
     const r = await fetch(url);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     setDataset(await r.text(), false, url);
-  } catch (e) { status(`載入失敗：${e.message}（請確認網址是 raw CSV 且允許 CORS）`, true); }
+  } catch (e) { status(`無法載入 ${url}：${e.message}。請確認網址指向 raw CSV，且伺服器允許跨網域讀取（CORS）。`, true); }
 }
-
 function loadDefault() {
-  const p = $('problem').value;
-  try { setDataset(DEFAULTS[p].csv, true, p === 'mlr' ? '內建 50_Startups.csv' : '內建 2330.TW 日收盤價'); }
-  catch (e) { status(e.message, true); }
+  try { setDataset(DEFAULTS[S.problem].csv, true, '內建 ' + DEFAULTS[S.problem].name); } catch (e) { status(e.message, true); }
 }
 
-function run(prob) {
-  $('cfgMLR').classList.toggle('hidden', prob !== 'mlr');
-  $('cfgAR').classList.toggle('hidden', prob !== 'ar');
-  $('secMLR').classList.toggle('hidden', prob !== 'mlr');
-  $('secAR').classList.toggle('hidden', prob !== 'ar');
-  if (!DS) return;
-  try { prob === 'mlr' ? runMLR() : runAR(); }
-  catch (e) { status('執行失敗：' + e.message, true); }
+// ---------- modeling ----------
+function compute() {
+  try {
+    S.problem === 'mlr' ? prepMLR() : prepAR();
+    S.res = runAll(S.ctx);
+    S.best = {};
+    ALGOS.forEach(a => { if (S.res[a]) S.best[a] = S.res[a].filter(Boolean).reduce((b, r) => (r.rmse < b.rmse ? r : b)).k; });
+    if (!S.res[S.algo] && S.algo !== 'ALL') S.algo = 'Lasso';
+    S.k = S.best[S.algo === 'ALL' ? 'Lasso' : S.algo];
+    const p = S.ctx.names.length;
+    status(`已載入：${S.label}｜train ${S.ctx.ytr.length} / test ${S.ctx.yte.length}｜${p} 個候選特徵` +
+      (p > EXHAUSTIVE_MAX ? `｜特徵超過 ${EXHAUSTIVE_MAX} 個，Exhaustive Search 已停用` : ''));
+    renderStatic();
+    update();
+  } catch (e) { status('無法建立模型：' + e.message, true); }
 }
-// ---------- Problem 1: MLR ----------
-function runMLR() {
+function prepMLR() {
   const target = $('target').value, ratio = +$('testSize').value || 0.2, seed = +$('seed').value || 0;
-  const rows = DS.data.filter(r => isNum(r[target]));
-  if (rows.length < 8) throw new Error('有效資料太少');
-  const D = buildDesign(DS.prof, rows, target);
-  if (!D.names.length) throw new Error('沒有可用的特徵欄位');
-  const y = rows.map(r => Number(r[target]));
-  let sp;
-  if (DS.builtin && rows.length === 50 && seed === 0 && Math.abs(ratio - 0.2) < 1e-9) {
-    sp = { test: SK_TEST_50, train: [...rows.keys()].filter(i => !SK_TEST_50.includes(i)) };
-  } else sp = splitIdx(rows.length, ratio, seed);
-  const g = (a, i) => i.map(j => a[j]);
-  const res = forwardSelection(g(D.X, sp.train), g(y, sp.train), g(D.X, sp.test), g(y, sp.test), D.names);
-  if (!res.length) throw new Error('無法建立模型');
-  const bestK = res.reduce((b, r) => (r.test.RMSE < b.test.RMSE ? r : b)).k;
-  MLR = { D, y, sp, res, target, k: bestK, g };
-  renderMLR();
-  buildPredForm();
-  status(`${$('status').textContent.split('｜')[0]}｜train ${sp.train.length} / test ${sp.test.length}，${D.names.length} 個特徵，最佳 k = ${bestK}`);
+  const rows = S.ds.data.filter(r => isNum(r[target]));
+  if (rows.length < 12) throw new Error(`有效資料只有 ${rows.length} 筆，至少需要 12 筆`);
+  const D = buildDesign(S.ds.prof, rows, target);
+  if (!D.names.length) throw new Error('除了 target 之外沒有可用的特徵欄位');
+  const y = rows.map(r => Number(r[target])), g = (a, i) => i.map(j => a[j]);
+  const sp = S.ds.builtin && rows.length === 50 && seed === 0 && Math.abs(ratio - 0.2) < 1e-9
+    ? { train: SK_TRAIN_50, test: SK_TEST_50 } : splitIdx(rows.length, ratio, seed);
+  const tag = S.ds.builtin ? 'Startup #' : 'Row #';
+  S.ctx = { Xtr: g(D.X, sp.train), ytr: g(y, sp.train), Xte: g(D.X, sp.test), yte: g(y, sp.test), names: D.names, labels: sp.test.map(i => tag + i) };
+  S.meta = { kind: 'mlr', D, target };
 }
-
-function renderMLR() {
-  const { res, k, D, sp, y, g, target } = MLR, cur = res[k - 1];
-  $('fsBody').innerHTML = res.map(r => `<tr class="clickable${r.k === k ? ' sel' : ''}" tabindex="0" data-k="${r.k}">
-    <td>${r.k}${r.k === res.reduce((b, x) => (x.test.RMSE < b.test.RMSE ? x : b)).k ? ' ★' : ''}</td>
-    <td>${r.features.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</td>
-    <td>${fmt(r.train.RMSE)}</td><td>${fmt(r.test.RMSE)}</td><td>${r.test.R2.toFixed(6)}</td></tr>`).join('');
-  $('fsBody').querySelectorAll('tr').forEach(tr => {
-    const go = () => { MLR.k = +tr.dataset.k; renderMLR(); updatePred(); };
-    tr.onclick = go; tr.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } };
+function prepAR() {
+  const dc = $('dateCol').value, vc = $('valCol').value, ratio = +$('arTest').value || 0.2;
+  const P = Math.max(1, Math.min(30, Math.round(+$('maxLag').value || 10)));
+  let rows = S.ds.data.filter(r => isNum(r[vc]));
+  if (dc !== vc && rows.length && rows.every(r => !isNaN(Date.parse(r[dc])))) rows = rows.slice().sort((a, b) => Date.parse(a[dc]) - Date.parse(b[dc]));
+  const s = rows.map(r => Number(r[vc])), dates = rows.map((r, i) => (dc !== vc ? r[dc] : 't' + i));
+  if (s.length < P + 30) throw new Error(`資料只有 ${s.length} 筆，AR(${P}) 至少需要 ${P + 30} 筆`);
+  const L = makeLags(s, P), n = Math.floor(L.X.length * (1 - ratio));
+  const names = Array.from({ length: P }, (_, i) => `lag_${i + 1}`);
+  const Xte = L.X.slice(n), yte = L.y.slice(n);
+  S.ctx = { Xtr: L.X.slice(0, n), ytr: L.y.slice(0, n), Xte, yte, names, labels: L.idx.slice(n).map(t => dates[t]) };
+  S.meta = { kind: 'ar', s, dates, L, n, P, vc, naive: metrics(yte, Xte.map(r => r[0])) };
+}
+function current() {
+  if (S.algo !== 'ALL') return { algo: S.algo, r: S.res[S.algo][S.k - 1] };
+  let best = null;
+  ALGOS.forEach(a => { const r = S.res[a] && S.res[a][S.k - 1]; if (r && (!best || r.rmse < best.r.rmse)) best = { algo: a, r }; });
+  return best;
+}
+// ---------- static parts (per dataset) ----------
+function renderStatic() {
+  const p = S.ctx.names.length, ar = S.meta.kind === 'ar';
+  $('pMax').textContent = p;
+  $('algoTabs').innerHTML = ALGOS.map(a => `<button class="tab-btn${a === S.algo ? ' active' : ''}" data-algo="${a}" aria-pressed="${a === S.algo}"${S.res[a] ? '' : ` disabled title="特徵數超過 ${EXHAUSTIVE_MAX}，窮舉 2^p 組合太慢"`}>
+      <i class="fa-solid ${ICON[a]}"></i> ${a === 'Exhaustive' ? 'Exhaustive Search' : a === 'Lasso' ? 'Lasso (L1 Ranking)' : a}
+      <span class="badge-pill">${BADGE[a]}</span></button>`).join('') +
+    `<button class="tab-btn${S.algo === 'ALL' ? ' active' : ''}" data-algo="ALL" aria-pressed="${S.algo === 'ALL'}" style="border-left:2px solid var(--primary)"><i class="fa-solid fa-layer-group"></i> Compare All 5 Methods</button>`;
+  $('algoTabs').querySelectorAll('.tab-btn').forEach(b => (b.onclick = () => {
+    S.algo = b.dataset.algo;
+    $('algoTabs').querySelectorAll('.tab-btn').forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', x === b); });
+    if (S.algo !== 'ALL') S.k = S.best[S.algo];
+    update();
+  }));
+  // hero
+  const lasso = S.res.Lasso, bk = S.best.Lasso, full = lasso[p - 1], sw = lasso[bk - 1];
+  $('heroTitle').textContent = ar ? 'Auto Regression：Lag Selection & Parsimony Analysis' : 'Feature Selection & Parsimony Analysis';
+  $('heroText').innerHTML = ar
+    ? `把 Problem 1 的 workflow 直接套到時間序列：以 <strong>lag_1 … lag_${p}</strong> 作為候選特徵，用同樣 5 種特徵選擇演算法挑出最佳 lag 組合，再以 OLS 建立 AR 模型，並與 naive baseline（y<sub>t</sub> = y<sub>t-1</sub>）比較。`
+    : `Compare 5 Machine Learning Feature Selection Algorithms (<strong>Lasso</strong>, <strong>Forward SFS</strong>, <strong>RFE</strong>, <strong>ElasticNet</strong>, <strong>Exhaustive Search</strong>) against Baseline OLS. Explore the bias-variance tradeoff across feature counts k = 1 … ${p}, pinpointing the sweet spot and the overfitting cliff.`;
+  const pills = [`<i class="fa-solid fa-database"></i> ${esc(S.label.replace(/^內建 /, ''))}（${S.ctx.ytr.length + S.ctx.yte.length} samples）`,
+    `<i class="fa-solid fa-bolt"></i> ${ALGOS.filter(a => S.res[a]).length} Selection Methods`,
+    `<i class="fa-solid fa-star" style="color:#34d399"></i> Sweet Spot（Lasso）: k=${bk} (${money(sw.rmse)} RMSE)`];
+  if (full && full.rmse > sw.rmse && bk !== p) pills.push(`<i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24"></i> Overfitting Warning: k=${p} (${money(full.rmse)} RMSE)`);
+  if (ar) pills.push(`<i class="fa-solid fa-scale-balanced"></i> Naive baseline: ${money(S.meta.naive.RMSE)} RMSE`);
+  $('heroTags').innerHTML = pills.map(t => `<span class="hero-pill">${t}</span>`).join('');
+  // titles
+  $('predTitle').textContent = ar ? 'Live Next-Day Predictor' : `Live ${S.meta.target} Predictor`;
+  $('predSub').textContent = ar ? '預設為最後 P 個實際值；修改 lag 值即可即時預測下一期。' : 'Test predictions in real-time with the active model.';
+  $('c3Title').innerHTML = ar ? '<i class="fa-solid fa-chart-area" style="color:var(--primary)"></i> Actual vs Predicted（時間序列）'
+    : '<i class="fa-solid fa-bullseye" style="color:var(--primary)"></i> Actual vs Predicted（test set）';
+  $('c3Sub').textContent = ar ? '灰線為實際值，彩色線為 test 區間的一步預測；虛線為 train / test 分界。' : '點越靠近紅色虛線 y = x，預測越準。';
+  $('outSub').textContent = `Top absolute residuals on the out-of-sample test set（${S.ctx.yte.length} ${ar ? 'trading days' : 'samples'}）。`;
+  buildPredInputs();
+}
+// ---------- dynamic parts (per algo / k) ----------
+function kButtons() {
+  const p = S.ctx.names.length, a = S.algo === 'ALL' ? 'Lasso' : S.algo, rs = S.res[a], bk = S.best[a];
+  const overK = rs[p - 1] && rs[bk - 1] && rs[p - 1].rmse > rs[bk - 1].rmse && bk !== p ? p : null;
+  $('kGroup').innerHTML = rs.map((r, i) => {
+    const k = i + 1, cls = ['k-btn', k === bk ? 'sweet-spot' : '', k === overK ? 'overfitting' : '', k === S.k ? 'active' : ''].join(' ');
+    const nested = a !== 'Exhaustive';
+    const sub = k === bk ? '★ Sweet Spot (Min RMSE)' : k === overK ? '⚠ Full Model (Overfitting)' : !r ? 'n/a'
+      : k === 1 || !nested ? r.features.join(', ') : '+ ' + r.features.find(f => !rs[i - 1] || !rs[i - 1].features.includes(f));
+    return `<button class="${cls}" data-k="${k}" aria-pressed="${k === S.k}"${r ? '' : ' disabled'}>k = ${k} <small>(${esc(sub)})</small></button>`;
+  }).join('');
+  $('kGroup').querySelectorAll('.k-btn').forEach(b => (b.onclick = () => { S.k = +b.dataset.k; update(); }));
+}
+function metricCard(title, val, note, badge = '', cls = '') {
+  return `<div class="metric-card ${cls}"><div class="metric-title"><span>${title}</span>${badge}</div><div class="metric-val">${val}</div><div class="metric-note">${note}</div></div>`;
+}
+function update() {
+  kButtons();
+  const cur = current(); if (!cur) return;
+  const { algo, r } = cur, a = S.algo === 'ALL' ? algo : S.algo, bk = S.best[a], p = S.ctx.names.length, isSweet = S.k === bk;
+  const isOver = S.k === p && bk !== p;
+  const pb = v => (v < 1e-4 ? 'p &lt; 0.0001' : 'p = ' + v.toFixed(4));
+  let html = metricCard('Test RMSE', money(r.rmse), 'Lower is better',
+      isSweet ? '<span class="badge-tag badge-green"><i class="fa-solid fa-award"></i> Optimal</span>' : isOver ? '<span class="badge-tag badge-amber"><i class="fa-solid fa-triangle-exclamation"></i> Overfitting</span>' : `<span class="badge-tag badge-blue">k = ${S.k}</span>`,
+      isSweet ? 'sweet' : isOver ? 'alert' : '') +
+    metricCard('R² Score', r.r2.toFixed(4), `Explains ${(r.r2 * 100).toFixed(2)}% of variance`, `<span class="badge-tag badge-blue"><i class="fa-solid fa-circle-check"></i> ${(r.r2 * 100).toFixed(1)}% Fit</span>`, isSweet ? 'sweet' : '') +
+    metricCard('Adjusted R²', r.adj_r2 == null ? 'N/A' : r.adj_r2.toFixed(4), 'Penalizes redundant parameters') +
+    metricCard('Mean Absolute Error', money(r.mae), 'Average prediction error') +
+    metricCard('F-Statistic', fmt(r.f_stat, 1), r.f_pvalue < 0.05 ? 'Model is statistically significant' : 'Model is not significant',
+      `<span class="badge-tag ${r.f_pvalue < 0.05 ? 'badge-green' : 'badge-amber'}">${pb(r.f_pvalue)}</span>`);
+  if (S.meta.kind === 'ar') {
+    const nv = S.meta.naive.RMSE, better = r.rmse < nv;
+    html += metricCard('Naive Baseline RMSE', money(nv), better ? `AR 比 naive 好 ${money(nv - r.rmse)}` : `AR 沒有贏過 naive（差 ${money(r.rmse - nv)}）`,
+      `<span class="badge-tag ${better ? 'badge-green' : 'badge-amber'}">${better ? 'AR wins' : 'Naive wins'}</span>`, better ? '' : 'alert');
+  }
+  $('metricsGrid').innerHTML = html;
+  $('featCount').textContent = r.features.length;
+  $('chips').innerHTML = r.features.map(f => `<span class="feature-chip">${esc(f)}</span>`).join('');
+  const nt = $('notice');
+  if (S.algo === 'ALL') { nt.className = 'badge-tag badge-blue'; nt.innerHTML = `<i class="fa-solid fa-layer-group"></i> k = ${S.k} 時 test RMSE 最低的方法：${algo}`; }
+  else if (isSweet) { nt.className = 'badge-tag badge-green'; nt.innerHTML = `<i class="fa-solid fa-star"></i> Occam's Razor：${a} 在 k = ${bk} 得到最低 test RMSE（${money(r.rmse)}）與 R²（${r.r2.toFixed(4)}）。`; }
+  else if (isOver) { nt.className = 'badge-tag badge-amber'; nt.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Overfitting Warning：放入全部 ${p} 個特徵，test RMSE 升到 ${money(r.rmse)}。`; }
+  else { nt.className = 'badge-tag badge-blue'; nt.innerHTML = `<i class="fa-solid fa-circle-info"></i> Model evaluated with ${S.k} predictors（${a}）。`; }
+  $('rmseBadge2').textContent = S.algo === 'ALL' ? 'Comparing 5 Methods' : a;
+  $('r2Badge2').textContent = `Peak at k = ${bk}`;
+  renderEquation(r); renderCoefs(r); renderOutliers(r); renderCharts(cur); updatePred();
+}
+function renderEquation(r) {
+  const y = S.meta.kind === 'ar' ? 'y<sub>t</sub>' : esc(S.meta.target);
+  const ic = r.coefficients[0].coef;
+  const parts = [`<span class="eq-intercept">${fmt(ic)}</span>`];
+  r.coefficients.slice(1).forEach(c => {
+    const v = S.meta.kind === 'ar' ? c.feature.replace('lag_', 'y<sub>t-') + '</sub>' : esc(c.feature);
+    parts.push(`${c.coef >= 0 ? '<span class="eq-pos">+</span>' : '<span class="eq-neg">−</span>'} ${Math.abs(c.coef).toFixed(4)} × <span class="eq-var">(${v})</span>`);
   });
-  $('kNow').textContent = k;
-  const m = cur.test;
-  $('mlrMetrics').innerHTML = [['Test R²', m.R2.toFixed(4)], ['MAE', fmt(m.MAE)], ['MSE', fmt(m.MSE, 0)], ['RMSE', fmt(m.RMSE)], ['Train RMSE', fmt(cur.train.RMSE)]]
-    .map(([a, b]) => `<div class="metric"><div class="k">${a}</div><div class="v">${b}</div></div>`).join('');
-  $('mlrEq').innerHTML = `${esc(target)} = ${fmt(cur.model.intercept)} ` +
-    cur.model.coef.map((c, i) => `${c >= 0 ? '+' : '−'} ${Math.abs(c).toFixed(4)} × ${esc(cur.features[i])}`).join(' ');
-  chart('cFS', { type: 'line', data: { labels: res.map(r => r.k), datasets: [
-    { label: 'Train RMSE', data: res.map(r => r.train.RMSE), borderColor: '#94a3b8', backgroundColor: '#94a3b8' },
-    { label: 'Test RMSE', data: res.map(r => r.test.RMSE), borderColor: '#4f46e5', backgroundColor: '#4f46e5',
-      pointRadius: res.map(r => (r.k === k ? 7 : 3)) }] },
-    options: { scales: { x: { title: { display: true, text: 'Number of Features' } }, y: { title: { display: true, text: 'RMSE' } } } } });
-  const yt = g(y, sp.test), yp = cur.model.predict(pick(g(D.X, sp.test), cur.cols));
-  const lo = Math.min(...yt, ...yp), hi = Math.max(...yt, ...yp);
-  chart('cAVP', { type: 'scatter', data: { datasets: [
-    { label: 'Test samples', data: yt.map((v, i) => ({ x: v, y: yp[i] })), backgroundColor: '#4f46e5' },
-    { label: 'y = x', type: 'line', data: [{ x: lo, y: lo }, { x: hi, y: hi }], borderColor: '#ef4444', borderDash: [5, 5], pointRadius: 0 }] },
-    options: { scales: { x: { title: { display: true, text: 'Actual' } }, y: { title: { display: true, text: 'Predicted' } } } } });
+  $('equationBox').innerHTML = `<strong>${y}</strong> = ${parts.join(' ')}`;
 }
-
-function buildPredForm() {
-  $('predName').textContent = MLR.target;
-  $('predForm').innerHTML = MLR.D.spec.map((s, i) => s.numeric
-    ? `<label class="field">${esc(s.col)}<input type="number" data-i="${i}" value="${Math.round(s.mean)}"></label>`
-    : `<label class="field">${esc(s.col)}<select data-i="${i}">${s.levels.map(l => `<option>${esc(l)}</option>`).join('')}</select></label>`).join('');
-  $('predForm').querySelectorAll('input,select').forEach(el => (el.oninput = updatePred));
-  updatePred();
+function renderCoefs(r) {
+  const dec = v => (Math.abs(v) >= 100 ? fmt(v, 2) : v.toFixed(4));
+  $('coefBody').innerHTML = r.coefficients.map(c => {
+    const pv = c.pvalue < 0.05
+      ? `<span class="badge-tag badge-green">${c.pvalue < 1e-4 ? '&lt; 0.0001' : c.pvalue.toFixed(4)} <i class="fa-solid fa-check"></i></span>`
+      : `<span class="badge-tag badge-amber">${c.pvalue.toFixed(4)} (n.s.)</span>`;
+    const vif = c.vif == null ? '-' : c.vif < 5 ? `<span class="badge-tag badge-green">${c.vif.toFixed(2)} (Safe)</span>` : `<span class="badge-tag badge-amber">${c.vif.toFixed(2)} (Collinear)</span>`;
+    return `<tr><td><strong>${esc(c.feature)}</strong></td><td class="mono" style="font-weight:600">${dec(c.coef)}</td><td>${dec(c.stderr)}</td>
+      <td>${c.tstat.toFixed(3)}</td><td>${pv}</td><td style="font-size:12px;color:var(--s600)">[${dec(c.ci_lower)}, ${dec(c.ci_upper)}]</td><td>${vif}</td></tr>`;
+  }).join('');
 }
-
+function renderOutliers(r) {
+  $('outBody').innerHTML = r.outliers.map(o => {
+    const high = o.abs_error > r.rmse;
+    return `<tr><td style="font-weight:700">#${o.rank}</td><td>${esc(o.index)}</td><td class="mono">${money(o.actual)}</td><td class="mono">${money(o.predicted)}</td>
+      <td style="color:${o.residual >= 0 ? '#059669' : '#dc2626'};font-weight:600">${o.residual >= 0 ? '+' : ''}${money(o.residual)}</td>
+      <td>${money(o.abs_error)}</td><td>${o.pct_error.toFixed(2)}%</td>
+      <td>${high ? '<span class="badge-tag badge-amber"><span class="status-dot dot-amber"></span> High Residual (&gt; RMSE)</span>' : '<span class="badge-tag badge-green"><span class="status-dot dot-green"></span> In Range</span>'}</td></tr>`;
+  }).join('');
+}
+function renderCharts(cur) {
+  const algos = S.algo === 'ALL' ? ALGOS.filter(a => S.res[a]) : [S.algo], labels = S.ctx.names.map((_, i) => String(i + 1));
+  const ds = key => algos.map(a => {
+    const rs = S.res[a], bk = S.best[a], c = COLORS[a];
+    return { label: a, data: rs.map(r => (r ? r[key] : null)), borderColor: c, backgroundColor: c, borderWidth: 2.5, tension: 0.1,
+      pointRadius: rs.map((_, i) => (i + 1 === S.k ? 7 : i + 1 === bk ? 6 : 4)), pointBackgroundColor: rs.map((_, i) => (i + 1 === bk ? '#10b981' : c)),
+      pointBorderColor: '#fff', pointBorderWidth: 2 };
+  });
+  const opts = yt => ({
+    plugins: { legend: { display: S.algo === 'ALL' }, tooltip: { callbacks: { afterLabel: ctx => {
+      const r = S.res[ctx.dataset.label][ctx.dataIndex]; return r ? 'Features: ' + r.features.join(', ') : ''; } } } },
+    scales: { x: { title: { display: true, text: 'Number of Features (k)' } }, y: { title: { display: true, text: yt } } },
+    onClick: (e, el) => { if (el.length) { S.k = el[0].index + 1; update(); } }
+  });
+  chart('rmseChart', { type: 'line', data: { labels, datasets: ds('rmse') }, options: opts('RMSE (Lower is Better)') });
+  chart('r2Chart', { type: 'line', data: { labels, datasets: ds('r2') }, options: opts('R-squared (Higher is Better)') });
+  const r = cur.r, col = COLORS[cur.algo];
+  if (S.meta.kind === 'mlr') {
+    const lo = Math.min(...r.ytest, ...r.ypred), hi = Math.max(...r.ytest, ...r.ypred);
+    chart('c3Chart', { type: 'scatter', data: { datasets: [
+      { label: 'Test samples', data: r.ytest.map((v, i) => ({ x: v, y: r.ypred[i] })), backgroundColor: col, pointRadius: 6 },
+      { label: 'y = x', type: 'line', data: [{ x: lo, y: lo }, { x: hi, y: hi }], borderColor: '#ef4444', borderDash: [6, 6], pointRadius: 0 }] },
+      options: { scales: { x: { title: { display: true, text: 'Actual' } }, y: { title: { display: true, text: 'Predicted' } } } } });
+  } else {
+    const M = S.meta, n = M.n, yAll = M.L.y, lab = M.L.idx.map(t => M.dates[t]);
+    const pred = yAll.map((_, i) => (i >= n ? r.ypred[i - n] : null));
+    chart('c3Chart', { type: 'line', data: { labels: lab, datasets: [
+      { label: 'Actual', data: yAll, borderColor: '#94a3b8', borderWidth: 1.5, pointRadius: 0 },
+      { label: `${cur.algo} k=${S.k} prediction (test)`, data: pred, borderColor: col, borderWidth: 2, pointRadius: 0 },
+      { label: 'Train / Test split', data: yAll.map((v, i) => (i === n ? v : null)), borderColor: '#0f172a', pointRadius: yAll.map((_, i) => (i === n ? 6 : 0)), pointStyle: 'line', showLine: false }] },
+      options: { interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: { maxTicksLimit: 10 } } } } });
+  }
+}
+// ---------- live predictor ----------
+function buildPredInputs() {
+  const box = $('predInputs');
+  if (S.meta.kind === 'ar') {
+    const s = S.meta.s;
+    box.innerHTML = S.ctx.names.map((nm, i) => `<div class="input-group" data-feat="${i}">
+      <div class="input-label-row"><label for="pi${i}">${nm}（y<sub>t-${i + 1}</sub>，${esc(S.meta.dates[s.length - 1 - i])}）</label><span class="unusedTag"></span></div>
+      <input type="number" id="pi${i}" class="input-field" value="${s[s.length - 1 - i]}" step="any"></div>`).join('');
+  } else {
+    const D = S.meta.D, rows = S.ds.data;
+    box.innerHTML = D.spec.map((sp, i) => {
+      if (!sp.numeric) return `<div class="input-group" data-col="${i}"><div class="input-label-row"><label for="pi${i}">${esc(sp.col)}</label><span class="unusedTag"></span></div>
+        <select id="pi${i}" class="input-field">${sp.levels.map((l, j) => `<option value="${esc(l)}">${esc(l)}${j === 0 ? '（Reference）' : ''}</option>`).join('')}</select></div>`;
+      const vals = rows.map(r => r[sp.col]).filter(isNum).map(Number), lo = Math.min(0, ...vals), hi = Math.max(...vals) * 1.2 || 1;
+      const step = Math.max((hi - lo) / 100, 1e-6), v = Math.round(sp.mean);
+      return `<div class="input-group" data-col="${i}"><div class="input-label-row"><label for="pi${i}">${esc(sp.col)}</label><span class="unusedTag"></span></div>
+        <input type="number" id="pi${i}" class="input-field" value="${v}" step="any">
+        <input type="range" id="pr${i}" class="range-slider" min="${lo}" max="${hi}" step="${step}" value="${v}" aria-label="${esc(sp.col)} slider"></div>`;
+    }).join('');
+    D.spec.forEach((sp, i) => {
+      const n = $('pi' + i), rg = $('pr' + i);
+      if (rg) { rg.oninput = () => { n.value = rg.value; updatePred(); }; n.addEventListener('input', () => { rg.value = n.value; }); }
+    });
+  }
+  box.querySelectorAll('input[type=number],select').forEach(el => el.addEventListener('input', updatePred));
+}
 function updatePred() {
-  if (!MLR) return;
-  const row = {};
-  $('predForm').querySelectorAll('[data-i]').forEach(el => (row[MLR.D.spec[+el.dataset.i].col] = el.value));
-  const cur = MLR.res[MLR.k - 1], x = MLR.D.encode(row);
-  $('predOut').textContent = fmt(cur.model.predict([cur.cols.map(j => x[j])])[0]);
-}
-
-// ---------- Problem 2: AR ----------
-function runAR() {
-  const dc = $('dateCol').value, vc = $('valCol').value, p = +$('lag').value, ratio = +$('arTest').value || 0.2;
-  let rows = DS.data.filter(r => isNum(r[vc]));
-  if (dc !== vc && rows.every(r => !isNaN(Date.parse(r[dc])))) rows = rows.slice().sort((a, b) => Date.parse(a[dc]) - Date.parse(b[dc]));
-  const s = rows.map(r => Number(r[vc])), dates = rows.map(r => r[dc]);
-  if (s.length < p + 20) throw new Error(`資料筆數 (${s.length}) 不足以建立 AR(${p})`);
-  const A = fitAR(s, p, ratio);
-  const row = (n, m) => `<tr><td>${n}</td><td>${m.R2.toFixed(4)}</td><td>${fmt(m.MAE)}</td><td>${fmt(m.MSE)}</td><td>${fmt(m.RMSE)}</td></tr>`;
-  $('arBody').innerHTML = row(`AR(${p}) train`, A.train) + row(`AR(${p}) test`, A.test) + row('Naive (y<sub>t</sub> = y<sub>t-1</sub>) test', A.naive);
-  $('arEq').innerHTML = `y<sub>t</sub> = ${A.m.intercept.toFixed(4)} ` + A.m.coef.map((c, i) => `${c >= 0 ? '+' : '−'} ${Math.abs(c).toFixed(4)}·y<sub>t-${i + 1}</sub>`).join(' ');
-  const testPred = A.m.predict(A.X.slice(A.n));
-  const predLine = A.idx.map((t, i) => (i >= A.n ? testPred[i - A.n] : null));
-  chart('cAR', { type: 'line', data: { labels: A.idx.map(t => dates[t]), datasets: [
-    { label: 'Actual', data: A.y, borderColor: '#94a3b8', pointRadius: 0, borderWidth: 1.5 },
-    { label: `AR(${p}) test prediction`, data: predLine, borderColor: '#4f46e5', pointRadius: 0, borderWidth: 2 }] },
-    options: { scales: { x: { ticks: { maxTicksLimit: 10 } } } } });
-  const lags = [], tr = [], te = [];
-  for (let q = 1; q <= 30 && s.length >= q + 20; q++) { const r = fitAR(s, q, ratio); lags.push(q); tr.push(r.train.RMSE); te.push(r.test.RMSE); }
-  chart('cLag', { type: 'line', data: { labels: lags, datasets: [
-    { label: 'Train RMSE', data: tr, borderColor: '#94a3b8' },
-    { label: 'Test RMSE', data: te, borderColor: '#4f46e5', pointRadius: lags.map(q => (q === p ? 7 : 3)) }] },
-    options: { scales: { x: { title: { display: true, text: 'lag p' } }, y: { title: { display: true, text: 'RMSE' } } } } });
-  const full = fitOLS(makeLags(s, p).X, makeLags(s, p).y);
-  $('fcBody').innerHTML = forecast(full, s, p, 5).map((v, i) => `<tr><td>t+${i + 1}</td><td>${fmt(v)}</td></tr>`).join('');
-  status(`${$('status').textContent.split('｜')[0]}｜${s.length} 筆，train ${A.n} / test ${A.X.length - A.n}`);
+  const cur = current(); if (!cur) return;
+  const r = cur.r, ar = S.meta.kind === 'ar';
+  let x;
+  if (ar) x = S.ctx.names.map((_, i) => Number($('pi' + i).value) || 0);
+  else { const row = {}; S.meta.D.spec.forEach((sp, i) => (row[sp.col] = $('pi' + i).value)); x = S.meta.D.encode(row); }
+  // dim inputs not in the active model
+  if (ar) $('predInputs').querySelectorAll('[data-feat]').forEach(g => { const u = !r.cols.includes(+g.dataset.feat); g.classList.toggle('unused', u); g.querySelector('.unusedTag').textContent = u ? '未使用' : ''; });
+  else {
+    let off = 0;
+    S.meta.D.spec.forEach((sp, i) => {
+      const idx = sp.names.map((_, j) => off + j); off += sp.names.length;
+      const g = $('predInputs').querySelector(`[data-col="${i}"]`), u = !idx.some(j => r.cols.includes(j));
+      g.classList.toggle('unused', u); g.querySelector('.unusedTag').textContent = u ? '未使用' : '';
+    });
+  }
+  const pred = r.model.intercept + r.cols.reduce((s, j, i) => s + r.model.coef[i] * x[j], 0);
+  const contrib = r.cols.map((j, i) => [S.ctx.names[j], r.model.coef[i] * x[j]]).filter(([, v]) => v !== 0)
+    .map(([n, v]) => `${esc(n)}: ${v >= 0 ? '+' : '−'}${S.unit}${fmt(Math.abs(v), 0)}`);
+  $('predLabel').textContent = ar ? 'Predicted Next Close (t+1)' : S.ds.builtin ? 'Predicted Startup Profit' : `Predicted ${S.meta.target}`;
+  $('predOut').textContent = money(pred);
+  let note = `Active predictors: ${r.features.map(esc).join(', ')}<br><span style="font-size:11px;color:#cbd5e1">(Intercept ${money(r.model.intercept)} | ${contrib.join(' | ')})</span>`;
+  if (ar) {
+    const h = x.slice().reverse(), fc = []; // h: oldest..newest
+    for (let s = 0; s < 5; s++) { const lag = i => h[h.length - 1 - i]; const v = r.model.intercept + r.cols.reduce((a, j, i) => a + r.model.coef[i] * lag(j), 0); fc.push(v); h.push(v); }
+    note += `<br>遞迴預測 t+1…t+5：${fc.map(v => money(v)).join('、')}`;
+  }
+  $('predNote').innerHTML = note;
 }
 
 // ---------- wiring ----------
-$('problem').onchange = () => { $('url').value = ''; $('url').placeholder = DEFAULTS[$('problem').value].url || 'https://.../data.csv（需有日期與數值欄）'; loadDefault(); };
+function setProblem(p) {
+  S.problem = p; S.algo = 'Lasso';
+  const ar = p === 'ar';
+  document.querySelectorAll('.mlrOnly').forEach(e => e.classList.toggle('hidden', ar));
+  document.querySelectorAll('.arOnly').forEach(e => e.classList.toggle('hidden', !ar));
+  $('titleText').textContent = ar ? '2330.TW Auto Regression Explorer' : '50 Startups Multiple Linear Regression Explorer';
+  $('crumb').textContent = ar ? '2330.TW Lag Progression' : '50 Startups Feature Progression';
+  $('url').value = '';
+  $('url').placeholder = ar ? 'https://.../prices.csv（需有日期欄與數值欄）' : 'https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv';
+  loadDefault();
+}
+$('problem').onchange = () => setProblem($('problem').value);
 $('btnLoad').onclick = loadURL;
+$('url').addEventListener('keydown', e => { if (e.key === 'Enter') loadURL(); });
 $('btnDefault').onclick = () => { $('url').value = ''; loadDefault(); };
 $('file').onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { setDataset(t, false, f.name); } catch (er) { status(er.message, true); } }); };
-$('btnRunMLR').onclick = () => run('mlr');
-$('btnRunAR').onclick = () => run('ar');
-$('target').onchange = () => run('mlr');
-$('lag').oninput = () => { $('lagOut').textContent = $('lag').value; };
-$('lag').onchange = () => run('ar');
-['dateCol', 'valCol'].forEach(id => ($(id).onchange = () => run('ar')));
-$('url').placeholder = DEFAULTS.mlr.url;
-loadDefault();
+$('btnRun').onclick = () => S.ds && compute();
+['target', 'dateCol', 'valCol'].forEach(id => ($(id).onchange = () => S.ds && compute()));
+setProblem('mlr');
 
 </script>
 </body>
